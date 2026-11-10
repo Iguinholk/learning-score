@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadastro — Learning Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+<div class="auth">
+  <section class="auth-lado" aria-label="Apresentação">
+    <h1>Crie sua conta</h1>
+    <p>Organize atividades, acompanhe notas e nunca mais perca um prazo.</p>
+  </section>
+  <main class="auth-form" id="conteudo">
+    <h2>Cadastro</h2>
+    <div id="erro" class="aviso erro" role="alert" hidden></div>
+    <form id="form" novalidate>
+      <label for="nome">Nome completo</label>
+      <input id="nome" autocomplete="name" maxlength="120" required>
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="senha">Senha (mínimo 8 caracteres)</label>
+      <input id="senha" type="password" autocomplete="new-password" minlength="8" maxlength="72" required>
+      <div class="linha-check" style="margin-top:1rem">
+        <input id="termos" type="checkbox" required>
+        <label for="termos" style="margin:0;font-weight:500">Li e aceito os termos de uso e a política de privacidade (LGPD). Os dados são usados apenas para o funcionamento da plataforma.</label>
+      </div>
+      <p><button class="btn" type="submit" id="enviar">Criar conta</button></p>
+    </form>
+    <p>Já tem conta? <a href="/login.html">Entrar</a></p>
+  </main>
+</div>
+<script src="/js/core.js"></script>
+<script>
+  document.getElementById('form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const erro = document.getElementById('erro'); erro.hidden = true;
+    const btn = document.getElementById('enviar'); btn.disabled = true;
+    try {
+      await api.post('/api/auth/register', { nome: nome.value, email: email.value, senha: senha.value, aceitouTermos: termos.checked });
+      await api.post('/api/auth/login', { email: email.value, senha: senha.value });
+      location.href = '/app.html#/dashboard';
+    } catch (e) {
+      const campos = e.campos ? ' ' + Object.values(e.campos).join(' ') : '';
+      erro.textContent = e.message + campos; erro.hidden = false; btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar — Learning Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+<div class="auth">
+  <section class="auth-lado" aria-label="Apresentação">
+    <h1>Learning <b>Score</b></h1>
+    <p>Atividades, prazos, notas e mensalidades da sua vida acadêmica em um só lugar.</p>
+  </section>
+  <main class="auth-form" id="conteudo">
+    <h2>Entrar</h2>
+    <div id="erro" class="aviso erro" role="alert" hidden></div>
+    <form id="form" novalidate>
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="current-password" required>
+      <p><button class="btn" type="submit" id="enviar">Entrar</button></p>
+    </form>
+    <p>Ainda não tem conta? <a href="/cadastro.html">Cadastre-se</a></p>
+  </main>
+</div>
+<script src="/js/core.js"></script>
+<script>
+  // Já autenticado? vai direto ao painel.
+  api.get('/api/auth/me').then(() => location.href = '/app.html#/dashboard').catch(() => {});
+  document.getElementById('form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const erro = document.getElementById('erro'); erro.hidden = true;
+    const btn = document.getElementById('enviar'); btn.disabled = true;
+    try {
+      await api.post('/api/auth/login', { email: email.value, senha: senha.value });
+      location.href = '/app.html#/dashboard';
+    } catch (e) {
+      erro.textContent = e.message; erro.hidden = false; btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
