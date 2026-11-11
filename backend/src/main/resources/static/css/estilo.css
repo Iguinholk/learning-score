@@ -1,124 +1,908 @@
 /* Learning Score — identidade: caderno de estudos (tinta azul-marinho + marca-texto amarelo) */
-:root{
-  --tinta:#1D2B4F; --tinta-2:#2C3E6B; --papel:#F2F5F9; --branco:#FFFFFF; --linha:#D3DBE8; --texto:#18213A; --suave:#4F5B78;
-  --grifo:#FFC83D; --verde:#0B7A6E; --verde-bg:#DDF3EF; --vermelho:#B3261E; --vermelho-bg:#FBE4E2; --ambar-bg:#FFF1CC; --azul-bg:#E3E9F8;
-  --raio:10px; --fonte-titulo:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif; --fonte:'Public Sans','Segoe UI',system-ui,sans-serif;
+/* ==========================================================================
+   LEARNING SCORE — FOLHA DE ESTILO
+   Identidade: caderno de estudos (tinta azul-marinho + marca-texto amarelo)
+
+   ÍNDICE
+    1. Variáveis (cores, fontes, medidas)
+    2. Base (reset e tipografia)
+    3. Acessibilidade (foco, leitores de tela, "pular para o conteúdo")
+    4. Layout (estrutura da página e menu lateral)
+    5. Componentes
+       5.1 Cabeçalho de página
+       5.2 Painéis e grades
+       5.3 Indicadores (cards de números)
+       5.4 Botões
+       5.5 Formulários
+       5.6 Tabelas
+       5.7 Selos de status (badges)
+       5.8 Listas
+       5.9 Avisos e mensagens
+       5.10 Paginação e gráficos
+    6. Calendário
+    7. Recomendações e conteúdos
+    8. Janela modal (formulários e confirmações)
+    9. Mini-player de vídeo
+   10. Avisos transitórios (toasts)
+   11. Telas de login e cadastro
+   12. Responsividade (telas até 900px)
+   13. Movimento reduzido
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. VARIÁVEIS
+   Para mudar as cores do sistema inteiro, altere apenas os valores abaixo.
+   ========================================================================== */
+:root {
+  /* Cores principais */
+  --tinta: #1D2B4F;          /* azul-marinho: menu, títulos, botões */
+  --tinta-2: #2C3E6B;        /* azul-marinho mais claro: hover e item ativo */
+  --papel: #F2F5F9;          /* fundo da página */
+  --branco: #FFFFFF;
+  --linha: #D3DBE8;          /* bordas e divisórias */
+  --texto: #18213A;          /* texto comum */
+  --suave: #4F5B78;          /* texto secundário */
+  --grifo: #FFC83D;          /* amarelo "marca-texto": destaques e foco */
+
+  /* Cores de situação (texto/borda e fundo) */
+  --verde: #0B7A6E;
+  --verde-bg: #DDF3EF;
+  --vermelho: #B3261E;
+  --vermelho-bg: #FBE4E2;
+  --ambar-bg: #FFF1CC;
+  --azul-bg: #E3E9F8;
+
+  /* Medidas */
+  --raio: 10px;              /* arredondamento dos cards */
+
+  /* Fontes */
+  --fonte-titulo: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --fonte: 'Public Sans', 'Segoe UI', system-ui, sans-serif;
 }
-*{box-sizing:border-box}
-html{font-size:100%}
-body{margin:0;background:var(--papel);color:var(--texto);font-family:var(--fonte);line-height:1.5}
-h1,h2,h3{font-family:var(--fonte-titulo);color:var(--tinta);line-height:1.2;margin:0 0 .5rem}
-h1{font-size:1.9rem} h2{font-size:1.2rem} h3{font-size:1.05rem}
-a{color:var(--tinta-2)}
-:focus-visible{outline:3px solid var(--grifo);outline-offset:2px;box-shadow:0 0 0 5px var(--tinta)}
-.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.pular{position:absolute;left:-999px;top:0;background:var(--grifo);color:var(--tinta);padding:.6rem 1rem;z-index:100}
-.pular:focus{left:0}
 
-/* Estrutura */
-.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
-.lateral{background:var(--tinta);color:#fff;padding:1.25rem .75rem;position:sticky;top:0;height:100vh;overflow:auto}
-.marca{font-family:var(--fonte-titulo);font-size:1.35rem;font-weight:700;padding:0 .75rem 1.25rem;display:block;color:#fff;text-decoration:none}
-.marca b{background:var(--grifo);color:var(--tinta);padding:0 .3rem;border-radius:3px;margin-left:.15rem}
-.lateral nav a,.lateral nav button{display:flex;align-items:center;gap:.7rem;width:100%;padding:.62rem .75rem;margin:.1rem 0;border-radius:8px;color:#DCE3F5;text-decoration:none;
-  background:none;border:0;font:inherit;text-align:left;cursor:pointer;border-left:4px solid transparent}
-.lateral nav a:hover,.lateral nav button:hover{background:var(--tinta-2);color:#fff}
-.lateral nav a[aria-current="page"]{background:var(--tinta-2);color:#fff;font-weight:600;border-left-color:var(--grifo)}
-.lateral svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.selo{margin-left:auto;background:var(--grifo);color:var(--tinta);border-radius:999px;font-size:.75rem;font-weight:700;padding:0 .5rem}
-main{padding:1.75rem clamp(1rem,3vw,2.5rem) 6rem;max-width:1200px;width:100%}
-main:focus{outline:none}
-.topo-mobile{display:none}
 
-/* Componentes */
-.pg-head{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;justify-content:space-between;margin-bottom:1.25rem}
-.pg-head p{margin:0;color:var(--suave)}
-.painel{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:1.1rem 1.25rem;margin-bottom:1.25rem}
-.grade-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem}
-.indicadores{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.9rem;margin-bottom:1.25rem}
-.ind{background:var(--branco);border:1px solid var(--linha);border-radius:var(--raio);padding:.9rem 1rem}
-.ind .v{font-family:var(--fonte-titulo);font-size:1.7rem;font-weight:700;color:var(--tinta);display:block}
-.ind .r{color:var(--suave);font-size:.88rem}
-.ind.alerta{border-color:var(--vermelho)} .ind.alerta .v{color:var(--vermelho)}
-.btn{display:inline-flex;align-items:center;gap:.4rem;border:2px solid var(--tinta);background:var(--tinta);color:#fff;border-radius:8px;padding:.5rem .95rem;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;min-height:40px}
-.btn:hover{background:var(--tinta-2);border-color:var(--tinta-2)}
-.btn.sec{background:var(--branco);color:var(--tinta)} .btn.sec:hover{background:var(--azul-bg)}
-.btn.perigo{background:var(--vermelho);border-color:var(--vermelho)} .btn.perigo:hover{background:#8f1d17}
-.btn.peq{padding:.25rem .65rem;min-height:32px;font-size:.9rem}
-.btn[disabled],.btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
-.acoes{display:flex;flex-wrap:wrap;gap:.5rem}
-label{display:block;font-weight:600;margin:.8rem 0 .25rem}
-input,select,textarea{width:100%;font:inherit;padding:.55rem .65rem;border:1.5px solid #8A97B5;border-radius:8px;background:#fff;color:var(--texto);min-height:42px}
-input[type=checkbox]{width:auto;min-height:0;transform:scale(1.25);margin-right:.5rem}
-.linha-check{display:flex;align-items:center;margin:.6rem 0;font-weight:500}
-.linha-check label{margin:0;font-weight:500}
-.filtros{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;margin-bottom:1rem}
-.filtros>div{min-width:180px} .filtros label{margin-top:0}
-.tabela-rolagem{overflow-x:auto}
-table{border-collapse:collapse;width:100%;min-width:640px}
-th,td{padding:.6rem .7rem;border-bottom:1px solid var(--linha);text-align:left;vertical-align:top}
-th{font-size:.88rem;color:var(--suave);font-weight:600;background:#F8FAFD}
-.badge{display:inline-block;border-radius:999px;padding:.05rem .65rem;font-size:.82rem;font-weight:600;white-space:nowrap}
-.b-PENDENTE,.b-MEDIA{background:var(--ambar-bg);color:#6B4A00} .b-EM_ANDAMENTO{background:var(--azul-bg);color:#1B3A8A}
-.b-CONCLUIDA,.b-PAGO,.b-BAIXA,.b-SUCESSO{background:var(--verde-bg);color:#075A51} .b-ATRASADA,.b-ATRASADO,.b-ALTA,.b-FALHA,.b-TIMEOUT{background:var(--vermelho-bg);color:#8A1B14}
-.lista-limpa{list-style:none;padding:0;margin:0}
-.lista-limpa li{display:flex;gap:.75rem;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--linha)}
-.lista-limpa li:last-child{border:0}
-.mudo{color:var(--suave)} .vazio{color:var(--suave);padding:.5rem 0}
-.aviso{border-left:5px solid var(--grifo);background:var(--ambar-bg);padding:.7rem 1rem;border-radius:6px;margin:0 0 1rem}
-.aviso.erro{border-color:var(--vermelho);background:var(--vermelho-bg)}
-.paginacao{display:flex;gap:.75rem;align-items:center;justify-content:flex-end;margin-top:.9rem}
-canvas{max-width:100%}
-
-/* Calendário */
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal .dow{font-size:.8rem;text-align:center;color:var(--suave);font-weight:600;padding:.3rem 0}
-.cal button.dia{min-height:84px;text-align:left;padding:.3rem .4rem;background:#fff;border:1px solid var(--linha);border-radius:6px;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:2px;overflow:hidden}
-.cal button.dia:hover{background:var(--azul-bg)}
-.cal button.dia.fora{background:#EDF1F7;color:#7A86A3} .cal button.dia.hoje{border:2px solid var(--tinta)}
-.cal button.dia[aria-pressed="true"]{outline:3px solid var(--grifo)}
-.chip{font-size:.72rem;border-radius:4px;padding:0 .3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
-.chip.ATIVIDADE{background:var(--azul-bg);color:#1B3A8A} .chip.PROVA{background:var(--vermelho-bg);color:#8A1B14}
-.chip.EVENTO_ACADEMICO{background:var(--verde-bg);color:#075A51} .chip.COMPROMISSO,.chip.OUTRO{background:var(--ambar-bg);color:#6B4A00}
-.mais{font-size:.72rem;color:var(--suave)}
-
-/* Recomendações / conteúdos */
-.cartao{border:1px solid var(--linha);border-radius:8px;padding:.8rem 1rem;margin:.6rem 0;background:#FCFDFE}
-.comp{font-family:var(--fonte-titulo);font-weight:700;color:var(--verde)}
-
-/* Modal */
-dialog.modal{border:0;border-radius:12px;padding:1.4rem;width:min(560px,94vw);box-shadow:0 20px 60px rgba(10,20,50,.35)}
-dialog.modal::backdrop{background:rgba(20,30,60,.55)}
-.modal-acoes{display:flex;justify-content:flex-end;gap:.6rem;margin-top:1.2rem}
-.erro-campo{color:var(--vermelho);font-size:.88rem;margin:.2rem 0 0}
-
-/* Mini-player */
-.player{position:fixed;right:1rem;bottom:1rem;width:min(380px,calc(100vw - 2rem));background:var(--tinta);color:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(10,20,50,.4);z-index:50;overflow:hidden}
-.player[hidden]{display:none}
-.player header{display:flex;align-items:center;gap:.4rem;padding:.4rem .5rem .4rem .8rem}
-.player header strong{flex:1;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.player header button{background:var(--tinta-2);color:#fff;border:0;border-radius:6px;min-width:34px;min-height:34px;cursor:pointer;font:inherit}
-.player .video{aspect-ratio:16/9;background:#000} .player .video iframe{width:100%;height:100%;border:0}
-.player.min .video{height:0;aspect-ratio:auto;overflow:hidden}
-
-/* Avisos transitórios */
-#toasts{position:fixed;top:1rem;right:1rem;display:grid;gap:.5rem;z-index:80;max-width:min(380px,92vw)}
-.toast{background:var(--tinta);color:#fff;padding:.7rem 1rem;border-radius:8px;border-left:5px solid var(--grifo)} .toast.erro{border-color:#FF8A80}
-
-/* Autenticação */
-.auth{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
-.auth-lado{background:var(--tinta);color:#fff;padding:3rem;display:flex;flex-direction:column;justify-content:center;
-  background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:28px 28px}
-.auth-lado h1{color:#fff;font-size:2.6rem} .auth-lado p{max-width:34ch;color:#DCE3F5;font-size:1.1rem}
-.auth-lado h1 b{background:var(--grifo);color:var(--tinta);padding:0 .35rem;border-radius:4px}
-.auth-form{padding:3rem clamp(1.2rem,5vw,4rem);display:flex;flex-direction:column;justify-content:center;max-width:520px;width:100%;margin:auto}
-
-@media (max-width:900px){
-  .app{grid-template-columns:1fr}
-  .lateral{position:fixed;left:0;top:0;bottom:0;width:260px;z-index:60;transform:translateX(-105%);transition:transform .2s}
-  body.menu-aberto .lateral{transform:none}
-  .topo-mobile{display:flex;align-items:center;justify-content:space-between;background:var(--tinta);color:#fff;padding:.6rem 1rem;position:sticky;top:0;z-index:40}
-  .auth{grid-template-columns:1fr} .auth-lado{padding:1.5rem} .auth-lado h1{font-size:1.8rem}
-  .cal button.dia{min-height:64px}
+/* ==========================================================================
+   2. BASE
+   ========================================================================== */
+* {
+  box-sizing: border-box;
 }
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--texto);
+  font-family: var(--fonte);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fonte-titulo);
+  color: var(--tinta);
+  line-height: 1.2;
+  margin: 0 0 .5rem;
+}
+
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1.05rem; }
+
+a {
+  color: var(--tinta-2);
+}
+
+
+/* ==========================================================================
+   3. ACESSIBILIDADE
+   ========================================================================== */
+
+/* Contorno visível ao navegar pelo teclado */
+:focus-visible {
+  outline: 3px solid var(--grifo);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--tinta);
+}
+
+/* Texto só para leitores de tela (invisível na tela) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Link "Ir para o conteúdo": aparece só quando recebe foco pelo teclado */
+.pular {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--grifo);
+  color: var(--tinta);
+  padding: .6rem 1rem;
+  z-index: 100;
+}
+
+.pular:focus {
+  left: 0;
+}
+
+
+/* ==========================================================================
+   4. LAYOUT
+   ========================================================================== */
+.app {
+  display: grid;
+  grid-template-columns: 250px 1fr;   /* menu lateral + conteúdo */
+  min-height: 100vh;
+}
+
+/* ----- Menu lateral ----- */
+.lateral {
+  background: var(--tinta);
+  color: #fff;
+  padding: 1.25rem .75rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+}
+
+.marca {
+  font-family: var(--fonte-titulo);
+  font-size: 1.35rem;
+  font-weight: 700;
+  padding: 0 .75rem 1.25rem;
+  display: block;
+  color: #fff;
+  text-decoration: none;
+}
+
+.marca b {
+  background: var(--grifo);
+  color: var(--tinta);
+  padding: 0 .3rem;
+  border-radius: 3px;
+  margin-left: .15rem;
+}
+
+/* Itens do menu (links e botão "Sair") */
+.lateral nav a,
+.lateral nav button {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  width: 100%;
+  padding: .62rem .75rem;
+  margin: .1rem 0;
+  border-radius: 8px;
+  color: #DCE3F5;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  border-left: 4px solid transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lateral nav a:hover,
+.lateral nav button:hover {
+  background: var(--tinta-2);
+  color: #fff;
+}
+
+/* Página atual: barra amarela à esquerda */
+.lateral nav a[aria-current="page"] {
+  background: var(--tinta-2);
+  color: #fff;
+  font-weight: 600;
+  border-left-color: var(--grifo);
+}
+
+.lateral svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Bolinha com o número de notificações não lidas */
+.selo {
+  margin-left: auto;
+  background: var(--grifo);
+  color: var(--tinta);
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: 0 .5rem;
+}
+
+/* ----- Área de conteúdo ----- */
+main {
+  padding: 1.75rem clamp(1rem, 3vw, 2.5rem) 6rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Barra superior que só aparece no celular (ver seção 12) */
+.topo-mobile {
+  display: none;
+}
+
+
+/* ==========================================================================
+   5. COMPONENTES
+   ========================================================================== */
+
+/* ----- 5.1 Cabeçalho de página (título + botões) ----- */
+.pg-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.pg-head p {
+  margin: 0;
+  color: var(--suave);
+}
+
+/* ----- 5.2 Painéis e grades ----- */
+.painel {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.grade-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ----- 5.3 Indicadores (cards de números do dashboard) ----- */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: .9rem;
+  margin-bottom: 1.25rem;
+}
+
+.ind {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: .9rem 1rem;
+}
+
+.ind .v {                       /* o número */
+  font-family: var(--fonte-titulo);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--tinta);
+  display: block;
+}
+
+.ind .r {                       /* o rótulo */
+  color: var(--suave);
+  font-size: .88rem;
+}
+
+/* Indicador em alerta (ex.: atividades atrasadas) */
+.ind.alerta {
+  border-color: var(--vermelho);
+}
+
+.ind.alerta .v {
+  color: var(--vermelho);
+}
+
+/* ----- 5.4 Botões ----- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  border: 2px solid var(--tinta);
+  background: var(--tinta);
+  color: #fff;
+  border-radius: 8px;
+  padding: .5rem .95rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  min-height: 40px;
+}
+
+.btn:hover {
+  background: var(--tinta-2);
+  border-color: var(--tinta-2);
+}
+
+/* Variações */
+.btn.sec {                      /* secundário (contorno) */
+  background: var(--branco);
+  color: var(--tinta);
+}
+
+.btn.sec:hover {
+  background: var(--azul-bg);
+}
+
+.btn.perigo {                   /* ações destrutivas (excluir) */
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+}
+
+.btn.perigo:hover {
+  background: #8f1d17;
+}
+
+.btn.peq {                      /* tamanho pequeno */
+  padding: .25rem .65rem;
+  min-height: 32px;
+  font-size: .9rem;
+}
+
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Grupo de botões lado a lado */
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+/* ----- 5.5 Formulários ----- */
+label {
+  display: block;
+  font-weight: 600;
+  margin: .8rem 0 .25rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  font: inherit;
+  padding: .55rem .65rem;
+  border: 1.5px solid #8A97B5;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--texto);
+  min-height: 42px;
+}
+
+input[type=checkbox] {
+  width: auto;
+  min-height: 0;
+  transform: scale(1.25);
+  margin-right: .5rem;
+}
+
+/* Linha com caixa de seleção + texto */
+.linha-check {
+  display: flex;
+  align-items: center;
+  margin: .6rem 0;
+  font-weight: 500;
+}
+
+.linha-check label {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Barra de filtros acima das tabelas */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.filtros > div {
+  min-width: 180px;
+}
+
+.filtros label {
+  margin-top: 0;
+}
+
+/* ----- 5.6 Tabelas ----- */
+.tabela-rolagem {               /* permite rolar para o lado no celular */
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 640px;
+}
+
+th,
+td {
+  padding: .6rem .7rem;
+  border-bottom: 1px solid var(--linha);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-size: .88rem;
+  color: var(--suave);
+  font-weight: 600;
+  background: #F8FAFD;
+}
+
+/* ----- 5.7 Selos de status (badges) -----
+   O nome da classe vem do valor no sistema: b-PENDENTE, b-ATRASADA etc. */
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: .05rem .65rem;
+  font-size: .82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Amarelo: pendente / prioridade média */
+.b-PENDENTE,
+.b-MEDIA {
+  background: var(--ambar-bg);
+  color: #6B4A00;
+}
+
+/* Azul: em andamento */
+.b-EM_ANDAMENTO {
+  background: var(--azul-bg);
+  color: #1B3A8A;
+}
+
+/* Verde: concluído / pago / prioridade baixa / sucesso */
+.b-CONCLUIDA,
+.b-PAGO,
+.b-BAIXA,
+.b-SUCESSO {
+  background: var(--verde-bg);
+  color: #075A51;
+}
+
+/* Vermelho: atrasado / prioridade alta / falha */
+.b-ATRASADA,
+.b-ATRASADO,
+.b-ALTA,
+.b-FALHA,
+.b-TIMEOUT {
+  background: var(--vermelho-bg);
+  color: #8A1B14;
+}
+
+/* ----- 5.8 Listas ----- */
+.lista-limpa {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lista-limpa li {
+  display: flex;
+  gap: .75rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: .6rem 0;
+  border-bottom: 1px solid var(--linha);
+}
+
+.lista-limpa li:last-child {
+  border: 0;
+}
+
+.mudo {                         /* texto secundário */
+  color: var(--suave);
+}
+
+.vazio {                        /* mensagem "nenhum item" */
+  color: var(--suave);
+  padding: .5rem 0;
+}
+
+/* ----- 5.9 Avisos e mensagens ----- */
+.aviso {
+  border-left: 5px solid var(--grifo);
+  background: var(--ambar-bg);
+  padding: .7rem 1rem;
+  border-radius: 6px;
+  margin: 0 0 1rem;
+}
+
+.aviso.erro {
+  border-color: var(--vermelho);
+  background: var(--vermelho-bg);
+}
+
+/* ----- 5.10 Paginação e gráficos ----- */
+.paginacao {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: .9rem;
+}
+
+canvas {
+  max-width: 100%;
+}
+
+
+/* ==========================================================================
+   6. CALENDÁRIO
+   ========================================================================== */
+.cal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);   /* 7 dias da semana */
+  gap: 4px;
+}
+
+.cal .dow {                     /* nomes dos dias (dom, seg...) */
+  font-size: .8rem;
+  text-align: center;
+  color: var(--suave);
+  font-weight: 600;
+  padding: .3rem 0;
+}
+
+/* Cada dia do mês */
+.cal button.dia {
+  min-height: 84px;
+  text-align: left;
+  padding: .3rem .4rem;
+  background: #fff;
+  border: 1px solid var(--linha);
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.cal button.dia:hover {
+  background: var(--azul-bg);
+}
+
+.cal button.dia.fora {          /* dia de outro mês */
+  background: #EDF1F7;
+  color: #7A86A3;
+}
+
+.cal button.dia.hoje {          /* dia de hoje */
+  border: 2px solid var(--tinta);
+}
+
+.cal button.dia[aria-pressed="true"] {   /* dia selecionado */
+  outline: 3px solid var(--grifo);
+}
+
+/* Etiquetas dentro do dia */
+.chip {
+  font-size: .72rem;
+  border-radius: 4px;
+  padding: 0 .3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.chip.ATIVIDADE {
+  background: var(--azul-bg);
+  color: #1B3A8A;
+}
+
+.chip.PROVA {
+  background: var(--vermelho-bg);
+  color: #8A1B14;
+}
+
+.chip.EVENTO_ACADEMICO {
+  background: var(--verde-bg);
+  color: #075A51;
+}
+
+.chip.COMPROMISSO,
+.chip.OUTRO {
+  background: var(--ambar-bg);
+  color: #6B4A00;
+}
+
+.mais {                         /* "+3 mais" */
+  font-size: .72rem;
+  color: var(--suave);
+}
+
+
+/* ==========================================================================
+   7. RECOMENDAÇÕES E CONTEÚDOS
+   ========================================================================== */
+.cartao {
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  padding: .8rem 1rem;
+  margin: .6rem 0;
+  background: #FCFDFE;
+}
+
+.comp {                         /* percentual de compatibilidade */
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  color: var(--verde);
+}
+
+
+/* ==========================================================================
+   8. JANELA MODAL
+   ========================================================================== */
+dialog.modal {
+  border: 0;
+  border-radius: 12px;
+  padding: 1.4rem;
+  width: min(560px, 94vw);
+  box-shadow: 0 20px 60px rgba(10, 20, 50, .35);
+}
+
+dialog.modal::backdrop {        /* fundo escurecido */
+  background: rgba(20, 30, 60, .55);
+}
+
+.modal-acoes {                  /* botões Cancelar / Salvar */
+  display: flex;
+  justify-content: flex-end;
+  gap: .6rem;
+  margin-top: 1.2rem;
+}
+
+.erro-campo {                   /* mensagem de erro embaixo de um campo */
+  color: var(--vermelho);
+  font-size: .88rem;
+  margin: .2rem 0 0;
+}
+
+
+/* ==========================================================================
+   9. MINI-PLAYER DE VÍDEO
+   ========================================================================== */
+.player {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  width: min(380px, calc(100vw - 2rem));
+  background: var(--tinta);
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(10, 20, 50, .4);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.player[hidden] {
+  display: none;
+}
+
+.player header {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .4rem .5rem .4rem .8rem;
+}
+
+.player header strong {
+  flex: 1;
+  font-size: .9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player header button {
+  background: var(--tinta-2);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  min-width: 34px;
+  min-height: 34px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.player .video {
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.player .video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Minimizado: esconde o vídeo mas mantém o som tocando */
+.player.min .video {
+  height: 0;
+  aspect-ratio: auto;
+  overflow: hidden;
+}
+
+
+/* ==========================================================================
+   10. AVISOS TRANSITÓRIOS (TOASTS)
+   ========================================================================== */
+#toasts {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  gap: .5rem;
+  z-index: 80;
+  max-width: min(380px, 92vw);
+}
+
+.toast {
+  background: var(--tinta);
+  color: #fff;
+  padding: .7rem 1rem;
+  border-radius: 8px;
+  border-left: 5px solid var(--grifo);
+}
+
+.toast.erro {
+  border-color: #FF8A80;
+}
+
+
+/* ==========================================================================
+   11. TELAS DE LOGIN E CADASTRO
+   ========================================================================== */
+.auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* lado azul + formulário */
+}
+
+/* Lado azul com fundo quadriculado (caderno) */
+.auth-lado {
+  background: var(--tinta);
+  color: #fff;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.auth-lado h1 {
+  color: #fff;
+  font-size: 2.6rem;
+}
+
+.auth-lado h1 b {
+  background: var(--grifo);
+  color: var(--tinta);
+  padding: 0 .35rem;
+  border-radius: 4px;
+}
+
+.auth-lado p {
+  max-width: 34ch;
+  color: #DCE3F5;
+  font-size: 1.1rem;
+}
+
+.auth-form {
+  padding: 3rem clamp(1.2rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 520px;
+  width: 100%;
+  margin: auto;
+}
+
+
+/* ==========================================================================
+   12. RESPONSIVIDADE (celulares e tablets pequenos)
+   Mantenha este bloco no FIM do arquivo para ele sobrescrever as regras acima.
+   ========================================================================== */
+@media (max-width: 900px) {
+  /* Uma coluna só; o menu vira uma gaveta que abre pelo botão "Menu" */
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .lateral {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    z-index: 60;
+    transform: translateX(-105%);
+    transition: transform .2s;
+  }
+
+  body.menu-aberto .lateral {
+    transform: none;
+  }
+
+  .topo-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--tinta);
+    color: #fff;
+    padding: .6rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  /* Login e cadastro empilhados */
+  .auth {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-lado {
+    padding: 1.5rem;
+  }
+
+  .auth-lado h1 {
+    font-size: 1.8rem;
+  }
+
+  /* Calendário mais compacto */
+  .cal button.dia {
+    min-height: 64px;
+  }
+}
+
+
+/* ==========================================================================
+   13. MOVIMENTO REDUZIDO
+   Respeita quem desativou animações no sistema operacional.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
