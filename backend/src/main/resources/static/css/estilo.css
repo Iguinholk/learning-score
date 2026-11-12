@@ -143,7 +143,7 @@ a {
   display: grid;
   grid-template-columns: 68px minmax(0, 1fr);
   min-height: 100vh;
-  transition: grid-template-columns 0.25s ease;
+  transition: grid-template-columns 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Menu aberto e fixado */
@@ -161,7 +161,7 @@ body.menu-fixo .app {
   height: 100vh;
   width: 68px;
   overflow: hidden;
-  transition: width 0.25s ease;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 50;
 }
 
@@ -205,12 +205,6 @@ body:not(.menu-fixo) .lateral:not(:hover) .marca {
   font-size: 0;
 }
 
-body:not(.menu-fixo) .lateral:not(:hover) .marca::before {
-  content: "LS";
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--grifo);
-}
 
 /* Notificações */
 body:not(.menu-fixo) .lateral:not(:hover) .selo {
@@ -305,51 +299,34 @@ body:not(.menu-fixo) .lateral:not(:hover) .selo {
   overflow: hidden;
 }
 
-/* Botão para fixar o menu */
-#fixar-menu {
-  flex-shrink: 0;
-  border: none;
-  background: transparent;
-  color: white;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-#fixar-menu:hover {
-  background: var(--tinta-2);
-}
-
-/* Menu recolhido: botão permanece acessível */
-body:not(.menu-fixo) .lateral:not(:hover) .menu-cabecalho .marca {
+/* Por padrão, a logo pequena fica escondida */
+.logo-pequena {
   display: none;
+}
+
+/* Menu recolhido: mostra só o ícone, centralizado */
+body:not(.menu-fixo) .lateral:not(:hover) .logo-grande {
+  display: none;
+}
+
+body:not(.menu-fixo) .lateral:not(:hover) .menu-cabecalho {
+  justify-content: center;
+  gap: 0;
+}
+
+body:not(.menu-fixo) .lateral:not(:hover) .menu-cabecalho .marca {
+  display: flex;          /* era display: none, apague essa regra antiga */
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body:not(.menu-fixo) .lateral:not(:hover) .menu-cabecalho {
   justify-content: center;
 }
 
-.logo-menu {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  background: #FFC83D;
-  color: #1D2B4F;
-  border-radius: 8px;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: -1px;
-}
-
-#fixar-menu {
-  padding: 3px;
-  width: 42px;
-  height: 42px;
-}
 
 /* Bolinha com o número de notificações não lidas */
 .selo {
@@ -365,8 +342,9 @@ body:not(.menu-fixo) .lateral:not(:hover) .menu-cabecalho {
 /* ----- Área de conteúdo ----- */
 main {
   padding: 1.75rem clamp(1rem, 3vw, 2.5rem) 6rem;
-  max-width: 1200px;
   width: 100%;
+  max-width: none;
+  min-width: 0;
 }
 
 main:focus {
@@ -409,16 +387,66 @@ main:focus {
 
 .grade-2 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .grade-2 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ----- 5.3 Indicadores (cards de números do dashboard) ----- */
 .indicadores {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: .9rem;
-  margin-bottom: 1.25rem;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .indicadores {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .indicadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Painel de atividades por status */
+.painel-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: auto;
+  min-height: 0;
+}
+
+/* Título alinhado à esquerda */
+.painel-status h2 {
+  align-self: flex-start;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* Gráfico */
+#g1 {
+  display: block;
+  width: 100% !important;
+  max-width: 340px;
+  max-height: 300px;
+  margin: 0 auto;
+}
+
+/* Texto abaixo do gráfico */
+#g1-txt {
+  align-self: flex-start;
+  margin-top: 15px;
 }
 
 .ind {

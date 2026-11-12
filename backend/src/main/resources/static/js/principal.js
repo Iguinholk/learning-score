@@ -33,18 +33,7 @@ function desenharMenu() {
   document.getElementById('lateral').innerHTML = html`
     <div class="menu-cabecalho">
       <a class="marca" href="#/dashboard"><img src="/img/logo-horizontal.png" alt="Learning Score"></a>
-        Learning<b>Score</b>
-      </a>
-
-      <button
-          type="button"
-          id="fixar-menu"
-          aria-label="Fixar menu lateral"
-          aria-pressed="false"
-          title="Fixar menu"
-      >
-        <span class="logo-menu">LS</span>
-      </button>
+      <img class="logo-pequena" src="/img/favicon-192.png" alt="" aria-hidden="true">
     </div>
 
     <nav aria-label="Principal">
@@ -65,29 +54,6 @@ function desenharMenu() {
       </button>
     </nav>
   `;
-
-  // Botão de fixar e desafixar o menu lateral
-  const botaoFixar = document.getElementById('fixar-menu');
-
-  botaoFixar.setAttribute(
-      'aria-pressed',
-      String(document.body.classList.contains('menu-fixo'))
-  );
-
-  botaoFixar.onclick = () => {
-    const fixo = document.body.classList.toggle('menu-fixo');
-
-    botaoFixar.setAttribute('aria-pressed', String(fixo));
-
-    botaoFixar.setAttribute(
-        'aria-label',
-        fixo ? 'Desafixar menu lateral' : 'Fixar menu lateral'
-    );
-
-    botaoFixar.title = fixo
-        ? 'Desafixar menu'
-        : 'Fixar menu';
-  };
 
   // Botão de sair da conta
   document.getElementById('btn-sair').onclick = async () => {

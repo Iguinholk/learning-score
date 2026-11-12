@@ -30,7 +30,7 @@ async function pgDashboard(el) {
         ${raw(d.proximasEntregas.length ? html`<ul class="lista-limpa">${lista(d.proximasEntregas, itemAtv)}</ul>` : '<p class="vazio">Sem entregas futuras cadastradas.</p>')}</section>
     </div>
     <div class="grade-2">
-      <section class="painel"><h2>Atividades por status</h2><canvas id="g1" role="img" aria-label="Gráfico de atividades por status"></canvas>
+      <section class="painel painel-status"><h2>Atividades por status</h2><canvas id="g1" role="img" aria-label="Gráfico de atividades por status"></canvas>
         <p class="mudo" id="g1-txt"></p></section>
       <section class="painel"><h2>Média por disciplina</h2>
         ${raw(d.mediasPorDisciplina.length ? '<canvas id="g2" role="img" aria-label="Gráfico de médias por disciplina"></canvas><p class="mudo" id="g2-txt"></p>'
