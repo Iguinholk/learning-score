@@ -141,19 +141,81 @@ a {
    ========================================================================== */
 .app {
   display: grid;
-  grid-template-columns: 250px 1fr;   /* menu lateral + conteúdo */
+  grid-template-columns: 68px minmax(0, 1fr);
   min-height: 100vh;
+  transition: grid-template-columns 0.25s ease;
+}
+
+/* Menu aberto e fixado */
+body.menu-fixo .app {
+  grid-template-columns: 250px minmax(0, 1fr);
 }
 
 /* ----- Menu lateral ----- */
 .lateral {
   background: var(--tinta);
   color: #fff;
-  padding: 1.25rem .75rem;
+  padding: 1.25rem .5rem;
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow: auto;
+  width: 68px;
+  overflow: hidden;
+  transition: width 0.25s ease;
+  z-index: 50;
+}
+
+/* Expande ao passar o mouse */
+.lateral:hover,
+body.menu-fixo .lateral {
+  width: 250px;
+}
+
+/* Expande visualmente sem deslocar o dashboard */
+.lateral:hover {
+  box-shadow: 6px 0 20px rgba(0, 0, 0, .12);
+}
+
+/* Menu recolhido */
+.lateral nav a,
+.lateral nav button {
+  white-space: nowrap;
+  overflow: hidden;
+  min-height: 42px;
+}
+
+.lateral nav svg {
+  flex-shrink: 0;
+}
+
+/* Esconde o texto sem remover os ícones */
+body:not(.menu-fixo) .lateral:not(:hover) nav a,
+body:not(.menu-fixo) .lateral:not(:hover) nav button {
+  font-size: 0;
+  gap: 0;
+}
+
+body:not(.menu-fixo) .lateral:not(:hover) nav svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Marca do Learning Score */
+body:not(.menu-fixo) .lateral:not(:hover) .marca {
+  font-size: 0;
+}
+
+body:not(.menu-fixo) .lateral:not(:hover) .marca::before {
+  content: "LS";
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--grifo);
+}
+
+/* Notificações */
+body:not(.menu-fixo) .lateral:not(:hover) .selo {
+  font-size: .65rem;
+  padding: 0 .25rem;
 }
 
 .marca {
@@ -217,6 +279,70 @@ a {
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+
+/* Cabeçalho do menu lateral */
+.menu-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 48px;
+  margin-bottom: 16px;
+}
+
+.menu-cabecalho .marca {
+  margin: 0;
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Botão para fixar o menu */
+#fixar-menu {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+#fixar-menu:hover {
+  background: var(--tinta-2);
+}
+
+/* Menu recolhido: botão permanece acessível */
+body:not(.menu-fixo) .lateral:not(:hover) .menu-cabecalho .marca {
+  display: none;
+}
+
+body:not(.menu-fixo) .lateral:not(:hover) .menu-cabecalho {
+  justify-content: center;
+}
+
+.logo-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: #FFC83D;
+  color: #1D2B4F;
+  border-radius: 8px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+#fixar-menu {
+  padding: 3px;
+  width: 42px;
+  height: 42px;
 }
 
 /* Bolinha com o número de notificações não lidas */

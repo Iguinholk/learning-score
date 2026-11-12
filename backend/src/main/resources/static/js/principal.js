@@ -28,12 +28,79 @@ const ROTAS = [
 ];
 const svg = n => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONES[n]}</svg>`;
 
+
 function desenharMenu() {
-  document.getElementById('lateral').innerHTML = html`<a class="marca" href="#/dashboard">Learning<b>Score</b></a>
-    <nav aria-label="Principal">${lista(ROTAS, r => html`<a href="#/${r.rota}" data-rota="${r.rota}">${raw(svg(r.icone))}<span>${r.rotulo}</span>${raw(r.selo ? '<span class="selo" id="selo-notif" hidden></span>' : '')}</a>`)}
-      <button id="btn-sair">${raw(svg('sair'))}<span>Sair (${window.usuario.nome})</span></button></nav>`;
-  document.getElementById('btn-sair').onclick = async () => { try { await api.post('/api/auth/logout'); } catch (e) { /* ignora */ } location.href = '/login.html'; };
+  document.getElementById('lateral').innerHTML = html`
+    <div class="menu-cabecalho">
+      <a class="marca" href="#/dashboard">
+        Learning<b>Score</b>
+      </a>
+
+      <button
+          type="button"
+          id="fixar-menu"
+          aria-label="Fixar menu lateral"
+          aria-pressed="false"
+          title="Fixar menu"
+      >
+        <span class="logo-menu">LS</span>
+      </button>
+    </div>
+
+    <nav aria-label="Principal">
+      ${lista(ROTAS, r => html`
+        <a href="#/${r.rota}" data-rota="${r.rota}">
+          ${raw(svg(r.icone))}
+          <span>${r.rotulo}</span>
+          ${raw(r.selo
+              ? '<span class="selo" id="selo-notif" hidden></span>'
+              : ''
+          )}
+        </a>
+      `)}
+
+      <button id="btn-sair">
+        ${raw(svg('sair'))}
+        <span>Sair (${window.usuario.nome})</span>
+      </button>
+    </nav>
+  `;
+
+  // Botão de fixar e desafixar o menu lateral
+  const botaoFixar = document.getElementById('fixar-menu');
+
+  botaoFixar.setAttribute(
+      'aria-pressed',
+      String(document.body.classList.contains('menu-fixo'))
+  );
+
+  botaoFixar.onclick = () => {
+    const fixo = document.body.classList.toggle('menu-fixo');
+
+    botaoFixar.setAttribute('aria-pressed', String(fixo));
+
+    botaoFixar.setAttribute(
+        'aria-label',
+        fixo ? 'Desafixar menu lateral' : 'Fixar menu lateral'
+    );
+
+    botaoFixar.title = fixo
+        ? 'Desafixar menu'
+        : 'Fixar menu';
+  };
+
+  // Botão de sair da conta
+  document.getElementById('btn-sair').onclick = async () => {
+    try {
+      await api.post('/api/auth/logout');
+    } catch (e) {
+      /* ignora erros de logout */
+    }
+
+    location.href = '/login.html';
+  };
 }
+
 
 async function atualizarSelo() {
   try {

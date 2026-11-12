@@ -1,35 +1,110 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Learning Score</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/estilo.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Learning Score</title>
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap"
+          rel="stylesheet"
+  >
+
+  <!-- Estilo principal -->
+  <link rel="stylesheet" href="/css/estilo.css">
 </head>
+
 <body>
-<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+
+<!-- Link de acessibilidade -->
+<a class="pular" href="#conteudo">
+  Ir para o conteúdo
+</a>
+
+<!-- Cabeçalho para dispositivos móveis -->
 <div class="topo-mobile">
   <strong>Learning Score</strong>
-  <button class="btn sec peq" id="btn-menu" aria-controls="lateral" aria-expanded="false">Menu</button>
+
+  <button
+          class="btn sec peq"
+          id="btn-menu"
+          aria-controls="lateral"
+          aria-expanded="false"
+  >
+    Menu
+  </button>
 </div>
+
+<!-- Estrutura principal -->
 <div class="app">
-  <aside class="lateral" id="lateral" aria-label="Menu lateral"></aside>
-  <main id="conteudo" tabindex="-1" aria-live="polite"></main>
+
+  <!-- Menu lateral -->
+  <aside
+          class="lateral"
+          id="lateral"
+          aria-label="Menu lateral"
+  ></aside>
+
+  <!-- Conteúdo das páginas -->
+  <main
+          id="conteudo"
+          tabindex="-1"
+          aria-live="polite"
+  ></main>
+
 </div>
-<aside class="player" id="player" hidden aria-label="Mini-player de vídeo">
+
+<!-- Mini-player de vídeo -->
+<aside
+        class="player"
+        id="player"
+        hidden
+        aria-label="Mini-player de vídeo"
+>
   <header>
     <strong id="player-titulo">Vídeo</strong>
-    <button id="player-min" aria-label="Minimizar player" aria-pressed="false">&ndash;</button>
-    <button id="player-fechar" aria-label="Fechar player">&times;</button>
+
+    <button
+            id="player-min"
+            aria-label="Minimizar player"
+            aria-pressed="false"
+    >
+      &ndash;
+    </button>
+
+    <button
+            id="player-fechar"
+            aria-label="Fechar player"
+    >
+      &times;
+    </button>
   </header>
+
   <div class="video" id="player-video"></div>
 </aside>
-<div id="toasts" role="status" aria-live="polite"></div>
+
+<!-- Notificações temporárias -->
+<div
+        id="toasts"
+        role="status"
+        aria-live="polite"
+></div>
+
+<!-- Biblioteca de gráficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<!-- Arquivos JavaScript do sistema -->
 <script src="/js/core.js"></script>
 <script src="/js/paginas.js"></script>
 <script src="/js/principal.js"></script>
+
 </body>
+
 </html>
