@@ -236,6 +236,12 @@ body:not(.menu-fixo) .lateral:not(:hover) .selo {
   margin-left: .15rem;
 }
 
+.marca img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* Itens do menu (links e botão "Sair") */
 .lateral nav a,
 .lateral nav button {
@@ -935,6 +941,13 @@ dialog.modal::backdrop {        /* fundo escurecido */
     linear-gradient(90deg, rgba(255, 255, 255, .06) 1px, transparent 1px);
   background-size: 28px 28px;
 }
+
+.auth-lado img {
+  width: min(100%, 520px);
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
 
 .auth-lado h1 {
   color: #fff;

@@ -32,7 +32,7 @@ const svg = n => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONES[n]}</svg>
 function desenharMenu() {
   document.getElementById('lateral').innerHTML = html`
     <div class="menu-cabecalho">
-      <a class="marca" href="#/dashboard">
+      <a class="marca" href="#/dashboard"><img src="/img/logo-horizontal.png" alt="Learning Score"></a>
         Learning<b>Score</b>
       </a>
 
