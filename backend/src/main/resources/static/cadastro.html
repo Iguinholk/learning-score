@@ -1,56 +1,301 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cadastro — Learning Score</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/estilo.css">
-<link rel="icon" href="/img/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Cadastro — Learning Score</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="/css/estilo.css">
+
+  <link rel="icon" href="/img/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="192x192" href="/img/favicon-192.png">
 </head>
-<body>
-<div class="auth">
-  <section class="auth-lado" aria-label="Apresentação">
-    <img src="/img/logo-completo.png" alt="Learning Score">
-    <h1>Crie sua conta</h1>
-    <p>Organize atividades, acompanhe notas e nunca mais perca um prazo.</p>
-  </section>
-  <main class="auth-form" id="conteudo">
-    <h2>Cadastro</h2>
-    <div id="erro" class="aviso erro" role="alert" hidden></div>
-    <form id="form" novalidate>
-      <label for="nome">Nome completo</label>
-      <input id="nome" autocomplete="name" maxlength="120" required>
-      <label for="email">E-mail</label>
-      <input id="email" type="email" autocomplete="username" required>
-      <label for="senha">Senha (mínimo 8 caracteres)</label>
-      <input id="senha" type="password" autocomplete="new-password" minlength="8" maxlength="72" required>
-      <div class="linha-check" style="margin-top:1rem">
-        <input id="termos" type="checkbox" required>
-        <label for="termos" style="margin:0;font-weight:500">Li e aceito os termos de uso e a política de privacidade (LGPD). Os dados são usados apenas para o funcionamento da plataforma.</label>
+
+<body class="pagina-cadastro">
+
+<div class="cadastro-container">
+
+  <div class="cadastro-card">
+
+    <!-- Apresentação -->
+    <section class="cadastro-apresentacao">
+
+      <img
+              src="/img/logo-completo-escuro.png"
+              alt="Learning Score"
+              class="cadastro-logo"
+      >
+
+      <h1 class="sr-only">Learning Score</h1>
+
+      <p>
+        Organize suas atividades, acompanhe
+        suas notas e tenha sua vida acadêmica
+        em um só lugar.
+      </p>
+
+    </section>
+
+    <!-- Formulário -->
+    <main class="cadastro-formulario" id="conteudo">
+
+      <h2>Criar sua conta</h2>
+
+      <div
+              id="erro"
+              class="aviso erro"
+              role="alert"
+              hidden
+      ></div>
+
+      <form id="form" novalidate>
+
+        <label for="nome">Nome completo</label>
+
+        <div class="cadastro-campo">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 21v-2a8 8 0 0 1 16 0v2"/>
+          </svg>
+
+          <input
+                  id="nome"
+                  type="text"
+                  placeholder="Seu nome completo"
+                  autocomplete="name"
+                  maxlength="120"
+                  required
+          >
+        </div>
+
+        <label for="email">E-mail</label>
+
+        <div class="cadastro-campo">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2"/>
+            <path d="m3 7 9 6 9-6"/>
+          </svg>
+
+          <input
+                  id="email"
+                  type="email"
+                  placeholder="voce@exemplo.com"
+                  autocomplete="username"
+                  required
+          >
+        </div>
+
+        <label for="senha">Senha</label>
+
+        <div class="cadastro-campo">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="10" width="16" height="11" rx="2"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+          </svg>
+
+          <input
+                  id="senha"
+                  type="password"
+                  placeholder="Mínimo de 8 caracteres"
+                  autocomplete="new-password"
+                  minlength="8"
+                  maxlength="72"
+                  required
+          >
+
+          <button
+                  type="button"
+                  class="cadastro-olho"
+                  data-alvo="senha"
+                  aria-label="Mostrar senha"
+                  aria-pressed="false"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+
+        <label for="confirmar-senha">Confirmar senha</label>
+
+        <div class="cadastro-campo">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="10" width="16" height="11" rx="2"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+          </svg>
+
+          <input
+                  id="confirmar-senha"
+                  type="password"
+                  placeholder="Repita sua senha"
+                  autocomplete="new-password"
+                  minlength="8"
+                  maxlength="72"
+                  required
+          >
+
+          <button
+                  type="button"
+                  class="cadastro-olho"
+                  data-alvo="confirmar-senha"
+                  aria-label="Mostrar senha"
+                  aria-pressed="false"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Aceite dos termos -->
+        <div class="cadastro-termos">
+          <input
+                  id="termos"
+                  type="checkbox"
+                  required
+          >
+
+          <label for="termos">
+            Li e aceito os Termos de Uso e a
+            Política de Privacidade do Learning Score.
+          </label>
+        </div>
+
+        <button
+                type="submit"
+                id="enviar"
+                class="cadastro-enviar"
+        >
+          Criar conta
+        </button>
+
+      </form>
+
+      <div class="cadastro-login">
+        <strong>Já possui uma conta?</strong>
+
+        <a href="/login.html">
+          Entrar
+        </a>
       </div>
-      <p><button class="btn" type="submit" id="enviar">Criar conta</button></p>
-    </form>
-    <p>Já tem conta? <a href="/login.html">Entrar</a></p>
-  </main>
+
+    </main>
+
+  </div>
+
+  <footer class="cadastro-rodape">
+    Ao criar sua conta, você concorda com os
+    Termos de Uso e a Política de Privacidade.
+  </footer>
+
 </div>
+
 <script src="/js/core.js"></script>
+
 <script>
+  'use strict';
+
+  // Mostrar ou ocultar senhas
+  document.querySelectorAll('.cadastro-olho').forEach(botao => {
+    botao.addEventListener('click', () => {
+      const campo = document.getElementById(botao.dataset.alvo);
+      const visivel = campo.type === 'password';
+
+      campo.type = visivel ? 'text' : 'password';
+
+      botao.setAttribute('aria-pressed', String(visivel));
+      botao.setAttribute(
+              'aria-label',
+              visivel ? 'Ocultar senha' : 'Mostrar senha'
+      );
+    });
+  });
+
+  // Cadastro de usuário
   document.getElementById('form').addEventListener('submit', async ev => {
     ev.preventDefault();
-    const erro = document.getElementById('erro'); erro.hidden = true;
-    const btn = document.getElementById('enviar'); btn.disabled = true;
+
+    const erro = document.getElementById('erro');
+    const btn = document.getElementById('enviar');
+
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value;
+    const confirmar = document.getElementById('confirmar-senha').value;
+    const termos = document.getElementById('termos').checked;
+
+    erro.hidden = true;
+
+    function mostrarErro(mensagem) {
+      erro.textContent = mensagem;
+      erro.hidden = false;
+    }
+
+    if (!nome || !email || !senha || !confirmar) {
+      mostrarErro('Preencha todos os campos.');
+      return;
+    }
+
+    if (!document.getElementById('email').checkValidity()) {
+      mostrarErro('Informe um e-mail válido.');
+      return;
+    }
+
+    if (senha.length < 8 || senha.length > 72) {
+      mostrarErro('A senha deve ter entre 8 e 72 caracteres.');
+      return;
+    }
+
+    if (senha !== confirmar) {
+      mostrarErro('As senhas não coincidem.');
+      return;
+    }
+
+    if (!termos) {
+      mostrarErro('É necessário aceitar os Termos de Uso.');
+      return;
+    }
+
+    btn.disabled = true;
+
     try {
-      await api.post('/api/auth/register', { nome: nome.value, email: email.value, senha: senha.value, aceitouTermos: termos.checked });
-      await api.post('/api/auth/login', { email: email.value, senha: senha.value });
+      await api.post('/api/auth/register', {
+        nome,
+        email,
+        senha,
+        aceitouTermos: termos
+      });
+
+      await api.post('/api/auth/login', {
+        email,
+        senha
+      });
+
       location.href = '/app.html#/dashboard';
+
     } catch (e) {
-      const campos = e.campos ? ' ' + Object.values(e.campos).join(' ') : '';
-      erro.textContent = e.message + campos; erro.hidden = false; btn.disabled = false;
+      const campos = e.campos
+              ? ' ' + Object.values(e.campos).join(' ')
+              : '';
+
+      mostrarErro((e.message || 'Erro ao criar conta.') + campos);
+      btn.disabled = false;
     }
   });
 </script>
+
 </body>
 </html>

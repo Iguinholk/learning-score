@@ -1073,3 +1073,543 @@ dialog.modal::backdrop {        /* fundo escurecido */
     animation: none !important;
   }
 }
+
+
+
+/* ==========================================
+   LEARNING SCORE - LOGIN
+   ========================================== */
+
+body.pagina-login {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #1D2B4F;
+  background-image:
+          linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size: 24px 24px;
+  font-family: 'Public Sans', sans-serif;
+}
+
+.pagina-login * {
+  box-sizing: border-box;
+}
+
+.pagina-login .login-container {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Card centralizado */
+
+.pagina-login .login-card {
+  width: min(100%, 730px);
+  min-height: 365px;
+  display: grid;
+  grid-template-columns: 44% 56%;
+  overflow: hidden;
+  background: #FFFFFF;
+  border-radius: 13px;
+  box-shadow: 0 12px 35px rgba(0,0,0,.12);
+}
+
+/* Lado esquerdo */
+
+.pagina-login .login-apresentacao {
+  background: #F2F5FA;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pagina-login .login-logo {
+  width: 100%;
+  max-width: 255px;
+  height: auto;
+  display: block;
+  margin-bottom: 18px;
+}
+
+.pagina-login .login-apresentacao p {
+  margin: 0;
+  color: #405173;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* Lado direito */
+
+.pagina-login .login-formulario {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: 34px 36px;
+  background: #FFFFFF;
+}
+
+.pagina-login .login-formulario h2 {
+  margin: 0 0 18px;
+  color: #1D2B4F;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.pagina-login .login-formulario label {
+  display: block;
+  margin: 12px 0 5px;
+  color: #1D2B4F;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Campos */
+
+.pagina-login .login-campo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pagina-login .login-campo > svg {
+  position: absolute;
+  left: 12px;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: #526487;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.pagina-login .login-campo input {
+  width: 100%;
+  height: 41px;
+  padding: 10px 42px 10px 38px;
+  border: 1px solid #9AAACB;
+  border-radius: 7px;
+  background: #FFFFFF;
+  color: #1D2B4F;
+  font: inherit;
+  font-size: 12px;
+}
+
+.pagina-login .login-campo input:focus {
+  outline: 2px solid #DCE7FF;
+  border-color: #2C3E6B;
+}
+
+/* Mostrar senha */
+
+.pagina-login .login-olho {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #526487;
+  cursor: pointer;
+}
+
+.pagina-login .login-olho svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Entrar */
+
+.pagina-login .login-entrar {
+  width: 100%;
+  height: 40px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 7px;
+  background: #1D2B4F;
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pagina-login .login-entrar:hover {
+  background: #2C3E6B;
+}
+
+.pagina-login .login-entrar:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+/* Cadastro */
+
+.pagina-login .login-cadastro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #D3DBE8;
+  font-size: 12px;
+}
+
+.pagina-login .login-cadastro strong {
+  color: #1D2B4F;
+}
+
+.pagina-login .login-cadastro a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 17px;
+  background: #FFC83D;
+  border-radius: 7px;
+  color: #18213A;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pagina-login .login-cadastro a:hover {
+  background: #F1B91C;
+}
+
+/* Termos de uso */
+
+.pagina-login .login-rodape {
+  color: #E1E7F5;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* Responsividade */
+
+@media (max-width: 650px) {
+  .pagina-login .login-card {
+    max-width: 420px;
+    grid-template-columns: 1fr;
+  }
+
+  .pagina-login .login-apresentacao {
+    padding: 28px;
+  }
+
+  .pagina-login .login-logo {
+    max-width: 210px;
+  }
+
+  .pagina-login .login-formulario {
+    padding: 24px 28px 30px;
+  }
+
+  .pagina-login .login-rodape {
+    max-width: 350px;
+  }
+}
+
+
+/* ==========================================
+   LEARNING SCORE - CADASTRO
+   ========================================== */
+
+body.pagina-cadastro {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #1D2B4F;
+  background-image:
+          linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size: 24px 24px;
+  font-family: 'Public Sans', sans-serif;
+}
+
+.pagina-cadastro * {
+  box-sizing: border-box;
+}
+
+/* Centralização */
+
+.pagina-cadastro .cadastro-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 30px 20px;
+}
+
+/* Card */
+
+.pagina-cadastro .cadastro-card {
+  display: grid;
+  grid-template-columns: 44% 56%;
+  width: min(100%, 730px);
+  min-height: 490px;
+  background: #FFFFFF;
+  border-radius: 13px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0,0,0,.12);
+}
+
+/* Apresentação */
+
+.pagina-cadastro .cadastro-apresentacao {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 34px;
+  background: #F2F5FA;
+}
+
+.pagina-cadastro .cadastro-logo {
+  display: block;
+  width: 100%;
+  max-width: 255px;
+  height: auto;
+  margin-bottom: 18px;
+}
+
+.pagina-cadastro .cadastro-apresentacao p {
+  margin: 0;
+  color: #405173;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* Formulário */
+
+.pagina-cadastro .cadastro-formulario {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  padding: 30px 36px;
+  background: #FFFFFF;
+}
+
+.pagina-cadastro .cadastro-formulario h2 {
+  margin: 0 0 16px;
+  color: #1D2B4F;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.pagina-cadastro .cadastro-formulario label {
+  display: block;
+  margin: 11px 0 5px;
+  color: #1D2B4F;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Campos */
+
+.pagina-cadastro .cadastro-campo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pagina-cadastro .cadastro-campo > svg {
+  position: absolute;
+  left: 12px;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: #526487;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.pagina-cadastro .cadastro-campo input {
+  width: 100%;
+  height: 41px;
+  padding: 10px 42px 10px 38px;
+  border: 1px solid #9AAACB;
+  border-radius: 7px;
+  background: #FFFFFF;
+  color: #1D2B4F;
+  font: inherit;
+  font-size: 12px;
+}
+
+.pagina-cadastro .cadastro-campo input:focus {
+  outline: 2px solid #DCE7FF;
+  border-color: #2C3E6B;
+}
+
+/* Mostrar senha */
+
+.pagina-cadastro .cadastro-olho {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #526487;
+  cursor: pointer;
+}
+
+.pagina-cadastro .cadastro-olho svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Termos */
+
+.pagina-cadastro .cadastro-termos {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 17px;
+}
+
+.pagina-cadastro .cadastro-termos input {
+  width: 15px;
+  height: 15px;
+  margin: 2px 0 0;
+  flex-shrink: 0;
+  accent-color: #1D2B4F;
+}
+
+.pagina-cadastro .cadastro-termos label {
+  margin: 0;
+  color: #405173;
+  font-size: 11px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+/* Botão de cadastro */
+
+.pagina-cadastro .cadastro-enviar {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 7px;
+  background: #1D2B4F;
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.pagina-cadastro .cadastro-enviar:hover {
+  background: #2C3E6B;
+}
+
+.pagina-cadastro .cadastro-enviar:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+/* Voltar para login */
+
+.pagina-cadastro .cadastro-login {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #D3DBE8;
+  font-size: 12px;
+}
+
+.pagina-cadastro .cadastro-login strong {
+  color: #1D2B4F;
+  font-weight: 600;
+}
+
+.pagina-cadastro .cadastro-login a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 17px;
+  border-radius: 7px;
+  background: #FFC83D;
+  color: #18213A;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pagina-cadastro .cadastro-login a:hover {
+  background: #F1B91C;
+}
+
+/* Rodapé */
+
+.pagina-cadastro .cadastro-rodape {
+  color: #E1E7F5;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* Responsividade */
+
+@media (max-width: 650px) {
+  .pagina-cadastro .cadastro-container {
+    padding: 24px 16px;
+  }
+
+  .pagina-cadastro .cadastro-card {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+
+  .pagina-cadastro .cadastro-apresentacao {
+    padding: 28px 28px 20px;
+  }
+
+  .pagina-cadastro .cadastro-logo {
+    max-width: 210px;
+  }
+
+  .pagina-cadastro .cadastro-formulario {
+    padding: 24px 28px 30px;
+  }
+
+  .pagina-cadastro .cadastro-rodape {
+    max-width: 350px;
+  }
+}
