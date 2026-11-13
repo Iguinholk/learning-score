@@ -24,8 +24,16 @@ const ROTAS = [
   { rota: 'recomendacoes', rotulo: 'Recomendações', icone: 'estrela', fn: pgRecomendacoes },
   { rota: 'conteudos', rotulo: 'Conteúdos', icone: 'video', fn: pgConteudos },
   { rota: 'configuracoes', rotulo: 'Configurações', icone: 'engrenagem', fn: pgConfiguracoes },
-  { rota: 'privacidade', rotulo: 'Privacidade e conta', icone: 'escudo', fn: pgPrivacidade }
 ];
+
+const ROTAS_INTERNAS = {
+  privacidade: {
+    rota: 'privacidade',
+    rotulo: 'Privacidade e conta',
+    fn: pgPrivacidade
+  }
+};
+
 const svg = n => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONES[n]}</svg>`;
 
 
@@ -88,8 +96,24 @@ async function rotear() {
   main.innerHTML = '<p class="vazio">Carregando…</p>';
   try {
     if (nome === 'atividades' && partes[1]) await pgAtividadeDetalhe(main, partes[1]);
-    else { const r = ROTAS.find(x => x.rota === nome); if (!r) { location.hash = '#/dashboard'; return; } await r.fn(main); }
-    document.title = (ROTAS.find(x => x.rota === nome)?.rotulo || 'Learning Score') + ' — Learning Score';
+
+    else {
+      const r = ROTAS.find(x => x.rota === nome)
+          || ROTAS_INTERNAS[nome];
+
+      if (!r) {
+        location.hash = '#/dashboard';
+        return;
+      }
+
+      await r.fn(main);
+    }
+
+    document.title = (
+        ROTAS.find(x => x.rota === nome)?.rotulo
+        || ROTAS_INTERNAS[nome]?.rotulo
+        || 'Learning Score'
+    ) + ' — Learning Score';
     if (nome !== 'notificacoes') atualizarSelo();
     main.focus({ preventScroll: true });
   } catch (e) {

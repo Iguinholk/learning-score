@@ -10,45 +10,162 @@ const indicador = (v, r, alerta = false) => html`<div class="ind ${alerta ? 'ale
 const ligacaoSegura = u => /^https?:\/\//i.test(u || '') ? u : '#';
 
 /* ---------- RF01 · Dashboard ---------- */
+
 async function pgDashboard(el) {
-  const d = await api.get('/api/dashboard'); const i = d.indicadores;
-  const itemAtv = a => html`<li><div><a href="#/atividades/${a.id}"><strong>${a.titulo}</strong></a><br><span class="mudo">${a.disciplinaNome || 'Sem disciplina'}, ${fmtDataHora(a.prazo)}</span></div>
-      <div>${raw(badge(a.prioridade))} ${raw(badge(a.status))}</div></li>`;
-  el.innerHTML = html`${raw(cabecalho(d.saudacao + ', ' + d.nome + '!', 'Veja o que precisa da sua atenção hoje.', '<a class="btn" href="#/atividades">Ver todas as atividades</a>'))}
+  const d = await api.get('/api/dashboard');
+  const i = d.indicadores;
+
+  const itemAtv = a => html`<li>
+    <div>
+      <a href="#/atividades/${a.id}">
+        <strong>${a.titulo}</strong>
+      </a>
+      <br>
+      <span class="mudo">
+        ${a.disciplinaNome || 'Sem disciplina'}, ${fmtDataHora(a.prazo)}
+      </span>
+    </div>
+    <div>
+      ${raw(badge(a.prioridade))}
+      ${raw(badge(a.status))}
+    </div>
+  </li>`;
+
+
+  el.innerHTML = html`
+    ${raw(cabecalho(
+        d.saudacao + ', ' + d.nome + '!',
+        'Veja o que precisa da sua atenção hoje.',
+        '<a class="btn" href="#/atividades">Ver todas as atividades</a>'
+    ))}
+
+
     <section class="indicadores" aria-label="Indicadores de organização acadêmica">
       ${raw(indicador(i.taxaConclusaoPercentual + '%', 'das atividades concluídas'))}
       ${raw(indicador(i.entregasEm7Dias, 'entregas nos próximos 7 dias'))}
       ${raw(indicador(i.atrasadas, 'atividades atrasadas', i.atrasadas > 0))}
       ${raw(indicador(fmtNum(i.mediaGeral), 'média geral das notas'))}
-      ${raw(indicador(i.frequenciaMedia == null ? '—' : fmtNum(i.frequenciaMedia) + '%', 'frequência média'))}
+      ${raw(indicador(
+          i.frequenciaMedia == null
+              ? '—'
+              : fmtNum(i.frequenciaMedia) + '%',
+          'frequência média'
+      ))}
       ${raw(indicador(fmtMoeda(i.mensalidadesEmAberto), 'em aberto na instituição'))}
     </section>
+
     <div class="grade-2">
-      <section class="painel"><h2>Atividades prioritárias</h2>
-        ${raw(d.prioritarias.length ? html`<ul class="lista-limpa">${lista(d.prioritarias, itemAtv)}</ul>` : '<p class="vazio">Nenhuma atividade em aberto. 🎉</p>')}</section>
-      <section class="painel"><h2>Próximas datas de entrega</h2>
-        ${raw(d.proximasEntregas.length ? html`<ul class="lista-limpa">${lista(d.proximasEntregas, itemAtv)}</ul>` : '<p class="vazio">Sem entregas futuras cadastradas.</p>')}</section>
+      <section class="painel">
+        <h2>Atividades prioritárias</h2>
+        ${raw(
+            d.prioritarias.length
+                ? html`<ul class="lista-limpa">${lista(d.prioritarias, itemAtv)}</ul>`
+                : '<p class="vazio">Nenhuma atividade em aberto. 🎉</p>'
+        )}
+      </section>
+
+      <section class="painel">
+        <h2>Próximas datas de entrega</h2>
+        ${raw(
+            d.proximasEntregas.length
+                ? html`<ul class="lista-limpa">${lista(d.proximasEntregas, itemAtv)}</ul>`
+                : '<p class="vazio">Sem entregas futuras cadastradas.</p>'
+        )}
+      </section>
     </div>
+
     <div class="grade-2">
-      <section class="painel painel-status"><h2>Atividades por status</h2><canvas id="g1" role="img" aria-label="Gráfico de atividades por status"></canvas>
-        <p class="mudo" id="g1-txt"></p></section>
-      <section class="painel"><h2>Média por disciplina</h2>
-        ${raw(d.mediasPorDisciplina.length ? '<canvas id="g2" role="img" aria-label="Gráfico de médias por disciplina"></canvas><p class="mudo" id="g2-txt"></p>'
-          : '<p class="vazio">Cadastre notas em Acadêmico para ver o gráfico.</p>')}</section>
-    </div>`;
+      <section class="painel painel-status">
+        <h2>Atividades por status</h2>
+        <canvas
+            id="g1"
+            role="img"
+            aria-label="Gráfico de atividades por status"
+        ></canvas>
+        <p class="mudo" id="g1-txt"></p>
+      </section>
+
+      <section class="painel">
+        <h2>Média por disciplina</h2>
+        ${raw(
+            d.mediasPorDisciplina.length
+                ? '<canvas id="g2" role="img" aria-label="Gráfico de médias por disciplina"></canvas><p class="mudo" id="g2-txt"></p>'
+                : '<p class="vazio">Cadastre notas em Acadêmico para ver o gráfico.</p>'
+        )}
+      </section>
+    </div>
+  `;
+
+
+  // ============================================
+  // GRÁFICOS DO DASHBOARD
+  // ============================================
+
   if (typeof Chart === 'undefined') return;
-  const st = Object.keys(d.atividadesPorStatus), cor = { PENDENTE: '#C98F00', EM_ANDAMENTO: '#3B5BDB', CONCLUIDA: '#0B7A6E', ATRASADA: '#B3261E' };
-  graficos.push(new Chart(document.getElementById('g1'), { type: 'doughnut',
-    data: { labels: st.map(rot), datasets: [{ data: st.map(k => d.atividadesPorStatus[k]), backgroundColor: st.map(k => cor[k]) }] },
-    options: { plugins: { legend: { position: 'bottom' } } } }));
-  document.getElementById('g1-txt').textContent = st.map(k => rot(k) + ': ' + d.atividadesPorStatus[k]).join('; ') + '.';
+
+  const st = Object.keys(d.atividadesPorStatus);
+
+  const cor = {
+    PENDENTE: '#C98F00',
+    EM_ANDAMENTO: '#3B5BDB',
+    CONCLUIDA: '#0B7A6E',
+    ATRASADA: '#B3261E'
+  };
+
+  graficos.push(new Chart(document.getElementById('g1'), {
+    type: 'doughnut',
+    data: {
+      labels: st.map(rot),
+      datasets: [{
+        data: st.map(k => d.atividadesPorStatus[k]),
+        backgroundColor: st.map(k => cor[k])
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  }));
+
+  document.getElementById('g1-txt').textContent =
+      st.map(k => rot(k) + ': ' + d.atividadesPorStatus[k]).join('; ') + '.';
+
   if (d.mediasPorDisciplina.length) {
-    graficos.push(new Chart(document.getElementById('g2'), { type: 'bar',
-      data: { labels: d.mediasPorDisciplina.map(m => m.disciplina), datasets: [{ label: 'Média', data: d.mediasPorDisciplina.map(m => Number(m.media)), backgroundColor: '#1D2B4F' }] },
-      options: { scales: { y: { min: 0, max: 10 } }, plugins: { legend: { display: false } } } }));
-    document.getElementById('g2-txt').textContent = d.mediasPorDisciplina.map(m => m.disciplina + ': ' + fmtNum(m.media)).join('; ') + '.';
+    graficos.push(new Chart(document.getElementById('g2'), {
+      type: 'bar',
+      data: {
+        labels: d.mediasPorDisciplina.map(m => m.disciplina),
+        datasets: [{
+          label: 'Média',
+          data: d.mediasPorDisciplina.map(m => Number(m.media)),
+          backgroundColor: '#1D2B4F'
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            min: 0,
+            max: 10
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    }));
+
+    document.getElementById('g2-txt').textContent =
+        d.mediasPorDisciplina
+            .map(m => m.disciplina + ': ' + fmtNum(m.media))
+            .join('; ') + '.';
   }
 }
+
 
 /* ---------- RF02/RF03 · Atividades ---------- */
 const OP_PRIORIDADE = ['BAIXA', 'MEDIA', 'ALTA'].map(v => ({ v, t: rot(v) }));
@@ -314,40 +431,338 @@ async function pgConteudos(el) {
   await desenhar();
 }
 
+
 /* ---------- RF08/RF10 · Configurações ---------- */
 async function pgConfiguracoes(el) {
+
   async function desenhar() {
-    const [prefs, plats, hist, cons] = await Promise.all([api.get('/api/preferencias-notificacao'), api.get('/api/integracoes'), api.get('/api/integracoes/historico'), api.get('/api/privacidade/consentimentos')]);
-    const temConsent = cons.some(c => c.tipo === 'INTEGRACOES' && c.concedido);
-    el.innerHTML = html`${raw(cabecalho('Configurações'))}
-      <section class="painel"><h2>Preferências de notificação</h2>
-        <form id="form-prefs">${lista(prefs, p => html`<div class="linha-check"><input type="checkbox" id="p-${p.tipo}" name="${p.tipo}" ${raw(p.ativa ? 'checked' : '')}><label for="p-${p.tipo}">${p.rotulo}</label></div>`)}
-        <button class="btn" type="submit">Salvar preferências</button></form></section>
-      <section class="painel"><h2>Plataformas externas</h2>
-        <div class="aviso"><strong>Simulação:</strong> não há integração real com plataformas educacionais nesta versão. A sincronização apenas demonstra o fluxo (manual: 1 por minuto; automática: a cada 6 horas) e nenhum dado é importado.</div>
-        ${raw(!temConsent ? '<div class="aviso erro">Para associar plataformas é necessário conceder consentimento em <a href="#/privacidade">Privacidade e conta</a>.</div>' : '')}
-        <div class="acoes" style="margin-bottom:.8rem"><button class="btn" data-acao="associar" ${raw(temConsent ? '' : 'disabled')}>Associar plataforma</button></div>
-        ${raw(!plats.length ? '<p class="vazio">Nenhuma plataforma associada.</p>' : html`<ul class="lista-limpa">${lista(plats, p => html`<li><div><strong>${p.nome}</strong> <span class="badge b-PENDENTE">${p.simulada ? 'Simulação' : 'Real'}</span> ${raw(p.ativa ? '' : '<span class="badge b-ATRASADA">Inativa</span>')}
-          <br><span class="mudo">Tipo ${p.tipo}. Última sincronização: ${fmtDataHora(p.ultimaSincronizacao)}</span></div>
-          <div class="acoes"><button class="btn sec peq" data-acao="sinc" data-id="${p.id}">Sincronizar agora</button><button class="btn perigo peq" data-acao="remover" data-id="${p.id}">Remover</button></div></li>`)}</ul>`)}
-        ${raw(hist.length ? html`<h3 style="margin-top:1rem">Histórico de sincronizações</h3><div class="tabela-rolagem"><table><thead><tr><th scope="col">Quando</th><th scope="col">Plataforma</th><th scope="col">Tipo</th><th scope="col">Resultado</th><th scope="col">Mensagem</th></tr></thead>
-          <tbody>${lista(hist, h => html`<tr><td>${fmtDataHora(h.iniciadoEm)}</td><td>${h.plataforma}</td><td>${rot(h.tipo)}</td><td>${raw(badge(h.status))}</td><td>${h.mensagem}</td></tr>`)}</tbody></table></div>` : '')}</section>`;
-    document.getElementById('form-prefs').onsubmit = async ev => {
+    const [prefs, plats, hist, cons] = await Promise.all([
+      api.get('/api/preferencias-notificacao'),
+      api.get('/api/integracoes'),
+      api.get('/api/integracoes/historico'),
+      api.get('/api/privacidade/consentimentos')
+    ]);
+
+    const temConsent = cons.some(
+        c => c.tipo === 'INTEGRACOES' && c.concedido
+    );
+
+    el.innerHTML = html`
+      ${raw(cabecalho('Configurações'))}
+
+      <!-- APARÊNCIA -->
+      <section class="painel painel-aparencia">
+        <h2>Aparência</h2>
+        <p class="mudo">
+          Personalize as cores do Learning Score de acordo
+          com sua preferência.
+        </p>
+
+        <div class="opcoes-tema" role="group" aria-label="Escolher tema">
+          <button
+              type="button"
+              class="opcao-tema"
+              data-tema="light"
+              aria-pressed="false"
+          >
+            <span class="opcao-tema-icone" aria-hidden="true">☀</span>
+            <span>Modo claro</span>
+            <span class="opcao-tema-check" aria-hidden="true">✓</span>
+          </button>
+
+          <button
+              type="button"
+              class="opcao-tema"
+              data-tema="dark"
+              aria-pressed="false"
+          >
+            <span class="opcao-tema-icone" aria-hidden="true">☾</span>
+            <span>Modo escuro</span>
+            <span class="opcao-tema-check" aria-hidden="true">✓</span>
+          </button>
+        </div>
+      </section>
+
+
+      <!-- PRIVACIDADE E CONTA -->
+      <section class="painel">
+        <h2>Privacidade e conta</h2>
+
+        <p class="mudo">
+          Consulte seus dados pessoais, gerencie consentimentos
+          e acesse as opções de exclusão da conta.
+        </p>
+
+        <a class="btn" href="#/privacidade">
+          Gerenciar privacidade e conta →
+        </a>
+      </section>
+
+
+      <!-- PREFERÊNCIAS DE NOTIFICAÇÃO -->
+      <section class="painel">
+        <h2>Preferências de notificação</h2>
+
+        <form id="form-prefs">
+          ${lista(prefs, p => html`
+            <div class="linha-check">
+              <input
+                  type="checkbox"
+                  id="p-${p.tipo}"
+                  name="${p.tipo}"
+                  ${raw(p.ativa ? 'checked' : '')}
+              >
+              <label for="p-${p.tipo}">${p.rotulo}</label>
+            </div>
+          `)}
+
+          <button class="btn" type="submit">
+            Salvar preferências
+          </button>
+        </form>
+      </section>
+
+      <!-- PLATAFORMAS EXTERNAS -->
+      <section class="painel">
+        <h2>Plataformas externas</h2>
+
+        <div class="aviso">
+          <strong>Simulação:</strong>
+          não há integração real com plataformas educacionais nesta versão.
+          A sincronização apenas demonstra o fluxo
+          (manual: 1 por minuto; automática: a cada 6 horas)
+          e nenhum dado é importado.
+        </div>
+
+        ${raw(
+            !temConsent
+                ? '<div class="aviso erro">Para associar plataformas é necessário conceder consentimento em <a href="#/privacidade">Privacidade e conta</a>.</div>'
+                : ''
+        )}
+
+        <div class="acoes" style="margin-bottom:.8rem">
+          <button
+              class="btn"
+              data-acao="associar"
+              ${raw(temConsent ? '' : 'disabled')}
+          >
+            Associar plataforma
+          </button>
+        </div>
+
+        ${raw(
+            !plats.length
+                ? '<p class="vazio">Nenhuma plataforma associada.</p>'
+                : html`
+                  <ul class="lista-limpa">
+                    ${lista(plats, p => html`
+                      <li>
+                        <div>
+                          <strong>${p.nome}</strong>
+                          <span class="badge b-PENDENTE">
+                        ${p.simulada ? 'Simulação' : 'Real'}
+                      </span>
+
+                          ${raw(
+                              p.ativa
+                                  ? ''
+                                  : '<span class="badge b-ATRASADA">Inativa</span>'
+                          )}
+
+                          <br>
+
+                          <span class="mudo">
+                        Tipo ${p.tipo}.
+                        Última sincronização:
+                        ${fmtDataHora(p.ultimaSincronizacao)}
+                      </span>
+                        </div>
+
+                        <div class="acoes">
+                          <button
+                              class="btn sec peq"
+                              data-acao="sinc"
+                              data-id="${p.id}"
+                          >
+                            Sincronizar agora
+                          </button>
+
+                          <button
+                              class="btn perigo peq"
+                              data-acao="remover"
+                              data-id="${p.id}"
+                          >
+                            Remover
+                          </button>
+                        </div>
+                      </li>
+                    `)}
+                  </ul>
+                `
+        )}
+
+        ${raw(
+            hist.length
+                ? html`
+                  <h3 style="margin-top:1rem">
+                    Histórico de sincronizações
+                  </h3>
+
+                  <div class="tabela-rolagem">
+                    <table>
+                      <thead>
+                      <tr>
+                        <th scope="col">Quando</th>
+                        <th scope="col">Plataforma</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Resultado</th>
+                        <th scope="col">Mensagem</th>
+                      </tr>
+                      </thead>
+
+                      <tbody>
+                      ${lista(hist, h => html`
+                        <tr>
+                          <td>${fmtDataHora(h.iniciadoEm)}</td>
+                          <td>${h.plataforma}</td>
+                          <td>${rot(h.tipo)}</td>
+                          <td>${raw(badge(h.status))}</td>
+                          <td>${h.mensagem}</td>
+                        </tr>
+                      `)}
+                      </tbody>
+                    </table>
+                  </div>
+                `
+                : ''
+        )}
+      </section>
+    `;
+
+    // ========================================
+    // SELETOR DE TEMA
+    // ========================================
+
+    const botoesTema = el.querySelectorAll('.opcao-tema');
+
+    function atualizarSelecaoTema() {
+      const temaAtual =
+          document.documentElement.dataset.theme || 'light';
+
+      botoesTema.forEach(botao => {
+        const selecionado = botao.dataset.tema === temaAtual;
+
+        botao.classList.toggle('selecionado', selecionado);
+        botao.setAttribute('aria-pressed', String(selecionado));
+      });
+    }
+
+    botoesTema.forEach(botao => {
+      botao.addEventListener('click', () => {
+        if (!window.LearningScoreTema) {
+          toast('O sistema de temas não está disponível.', 'erro');
+          return;
+        }
+
+        window.LearningScoreTema.definir(botao.dataset.tema);
+        atualizarSelecaoTema();
+      });
+    });
+
+    atualizarSelecaoTema();
+
+    // ========================================
+    // PREFERÊNCIAS DE NOTIFICAÇÃO
+    // ========================================
+
+    el.querySelector('#form-prefs').onsubmit = async ev => {
       ev.preventDefault();
-      try { await api.put('/api/preferencias-notificacao', { preferencias: prefs.map(p => ({ tipo: p.tipo, rotulo: p.rotulo, ativa: ev.target.elements[p.tipo].checked })) }); toast('Preferências salvas.'); }
-      catch (e) { toast(e.message, 'erro'); }
+
+      try {
+        await api.put('/api/preferencias-notificacao', {
+          preferencias: prefs.map(p => ({
+            tipo: p.tipo,
+            rotulo: p.rotulo,
+            ativa: ev.target.elements[p.tipo].checked
+          }))
+        });
+
+        toast('Preferências salvas.');
+      } catch (e) {
+        toast(e.message, 'erro');
+      }
     };
   }
+
+  // ========================================
+  // AÇÕES DAS PLATAFORMAS
+  // ========================================
+
   delegar(el, {
-    associar: async () => { if (await abrirForm({ titulo: 'Associar plataforma', intro: 'Será criada uma associação demonstrativa (simulação).',
-      campos: [{ name: 'nome', label: 'Nome da plataforma', obrigatorio: true, max: 80 }, { name: 'tipo', label: 'Tipo', tipo: 'select', opcoes: ['AVA', 'MOODLE', 'CLASSROOM', 'PORTAL_ACADEMICO', 'OUTRA'].map(v => ({ v, t: v })) },
-        { name: 'identificadorExterno', label: 'Seu identificador na plataforma (opcional)', max: 120 }],
-      enviar: v => api.post('/api/integracoes', { nome: v.nome, tipo: v.tipo, identificadorExterno: v.identificadorExterno || null }) })) { toast('Plataforma associada.'); desenhar(); } },
-    sinc: async d => { try { const h = await api.post(`/api/integracoes/${d.id}/sincronizar`); toast(h.mensagem); } catch (e) { toast(e.message, 'erro'); } desenhar(); },
-    remover: async d => { if (await confirmar('Remover esta plataforma?', 'Remover')) { await api.del('/api/integracoes/' + d.id); desenhar(); } }
+    associar: async () => {
+      if (await abrirForm({
+        titulo: 'Associar plataforma',
+        intro: 'Será criada uma associação demonstrativa (simulação).',
+        campos: [
+          {
+            name: 'nome',
+            label: 'Nome da plataforma',
+            obrigatorio: true,
+            max: 80
+          },
+          {
+            name: 'tipo',
+            label: 'Tipo',
+            tipo: 'select',
+            opcoes: [
+              'AVA',
+              'MOODLE',
+              'CLASSROOM',
+              'PORTAL_ACADEMICO',
+              'OUTRA'
+            ].map(v => ({ v, t: v }))
+          },
+          {
+            name: 'identificadorExterno',
+            label: 'Seu identificador na plataforma (opcional)',
+            max: 120
+          }
+        ],
+        enviar: v => api.post('/api/integracoes', {
+          nome: v.nome,
+          tipo: v.tipo,
+          identificadorExterno: v.identificadorExterno || null
+        })
+      })) {
+        toast('Plataforma associada.');
+        desenhar();
+      }
+    },
+
+    sinc: async d => {
+      try {
+        const h = await api.post(
+            `/api/integracoes/${d.id}/sincronizar`
+        );
+        toast(h.mensagem);
+      } catch (e) {
+        toast(e.message, 'erro');
+      }
+
+      desenhar();
+    },
+
+    remover: async d => {
+      if (await confirmar('Remover esta plataforma?', 'Remover')) {
+        await api.del('/api/integracoes/' + d.id);
+        desenhar();
+      }
+    }
   });
+
   await desenhar();
 }
+
 
 /* ---------- RF12 · Privacidade e conta ---------- */
 async function pgPrivacidade(el) {

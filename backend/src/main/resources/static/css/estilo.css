@@ -1613,3 +1613,125 @@ body.pagina-cadastro {
     max-width: 350px;
   }
 }
+
+/* Ações do cabeçalho do dashboard */
+
+.acoes-dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-tema {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  min-height: 44px;
+  padding: 0 17px;
+
+  border: 1px solid var(--linha);
+  border-radius: 9px;
+
+  background: var(--branco);
+  color: var(--texto);
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-tema:hover {
+  border-color: var(--grifo);
+}
+
+#icone-tema {
+  font-size: 19px;
+  line-height: 1;
+}
+
+
+/* ==========================================
+   CONFIGURAÇÕES — APARÊNCIA
+   ========================================== */
+
+.painel-aparencia .mudo {
+  margin: 6px 0 18px;
+}
+
+.opcoes-tema {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 520px;
+}
+
+.opcao-tema {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 76px;
+  padding: 16px;
+  border: 2px solid var(--linha);
+  border-radius: 12px;
+  background: var(--branco);
+  color: var(--texto);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition:
+          border-color .2s ease,
+          background-color .2s ease,
+          transform .2s ease;
+}
+
+.opcao-tema:hover {
+  border-color: #C98F00;
+  transform: translateY(-1px);
+}
+
+.opcao-tema.selecionado {
+  border-color: #C98F00;
+}
+
+.opcao-tema-icone {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--papel);
+  font-size: 23px;
+}
+
+.opcao-tema-check {
+  display: none;
+  margin-left: auto;
+  color: #C98F00;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.opcao-tema.selecionado .opcao-tema-check {
+  display: inline;
+}
+
+.opcao-tema:focus-visible {
+  outline: 3px solid #C98F00;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .opcoes-tema {
+    grid-template-columns: 1fr;
+  }
+}

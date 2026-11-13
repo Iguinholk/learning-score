@@ -1,0 +1,87 @@
+
+/* LEARNING SCORE — SISTEMA DE TEMAS */
+
+/* Tema escuro */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --tinta: #263A60;
+    --tinta-2: #344B76;
+    --papel: #101827;
+    --branco: #1C2940;
+    --linha: #34435E;
+    --texto: #F1F5FC;
+    --suave: #A8B8D3;
+    --grifo: #FFC83D;
+
+    --verde-bg: #163C39;
+    --vermelho-bg: #482827;
+    --ambar-bg: #473A21;
+    --azul-bg: #263A60;
+}
+
+/* Elementos que precisam de ajustes específicos */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background: #202F49;
+    color: #F1F5FC;
+    border-color: #526487;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: #A8B8D3;
+}
+
+[data-theme="dark"] th {
+    background: #253550;
+    color: #D4DFF0;
+}
+
+[data-theme="dark"] .cartao {
+    background: #202F49;
+}
+
+[data-theme="dark"] .cal button.dia {
+    background: #1C2940;
+    color: #F1F5FC;
+}
+
+[data-theme="dark"] .cal button.dia.fora {
+    background: #172236;
+    color: #91A1BC;
+}
+
+[data-theme="dark"] .ind .v,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3 {
+    color: #F1F5FC;
+}
+
+[data-theme="dark"] .btn.sec {
+    background: #263A60;
+    color: #FFFFFF;
+}
+
+/* Cores específicas para a navegação */
+[data-theme="dark"] .lateral {
+    background: #16233A;
+}
+
+/* Transição discreta */
+@media (prefers-reduced-motion: no-preference) {
+    body,
+    .painel,
+    .ind,
+    .cartao,
+    input,
+    select,
+    textarea {
+        transition:
+                background-color .2s ease,
+                border-color .2s ease,
+                color .2s ease;
+    }
+}
