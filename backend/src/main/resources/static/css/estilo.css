@@ -1086,8 +1086,11 @@ body.pagina-login {
   background-color: #1D2B4F;
   background-image:
           linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
-  background-size: 24px 24px;
+          linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px),
+          url('/img/logo-watermark-pattern.svg');
+  background-size: 24px 24px, 24px 24px, 168px 291px;
+  background-position: 0 0, 0 0, 0 0;
+  background-repeat: repeat, repeat, repeat;
   font-family: 'Public Sans', sans-serif;
 }
 
@@ -1339,8 +1342,11 @@ body.pagina-cadastro {
   background-color: #1D2B4F;
   background-image:
           linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
-  background-size: 24px 24px;
+          linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px),
+          url('/img/logo-watermark-pattern.svg');
+  background-size: 24px 24px, 24px 24px, 168px 291px;
+  background-position: 0 0, 0 0, 0 0;
+  background-repeat: repeat, repeat, repeat;
   font-family: 'Public Sans', sans-serif;
 }
 
