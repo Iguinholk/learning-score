@@ -451,37 +451,75 @@ async function pgConfiguracoes(el) {
       ${raw(cabecalho('Configurações'))}
 
       <!-- APARÊNCIA -->
-      <section class="painel painel-aparencia">
-        <h2>Aparência</h2>
-        <p class="mudo">
-          Personalize as cores do Learning Score de acordo
-          com sua preferência.
-        </p>
+      <div class="aparencia-layout">
+        <section class="painel painel-aparencia">
+          <h2>Tema do aplicativo</h2>
+          <p class="mudo">Escolha como prefere ver suas páginas.</p>
 
-        <div class="opcoes-tema" role="group" aria-label="Escolher tema">
-          <button
-              type="button"
-              class="opcao-tema"
-              data-tema="light"
-              aria-pressed="false"
-          >
-            <span class="opcao-tema-icone" aria-hidden="true">☀</span>
-            <span>Modo claro</span>
-            <span class="opcao-tema-check" aria-hidden="true">✓</span>
-          </button>
+          <div class="opcoes-tema" role="group" aria-label="Escolher tema">
+            <button type="button" class="opcao-tema" data-tema="light" aria-pressed="false">
+              <span class="tema-mini tema-mini-claro" aria-hidden="true">
+                <span class="tema-mini-lateral"><i></i><i></i><i></i><i></i></span>
+                <span class="tema-mini-conteudo"><i class="tema-mini-titulo"></i><i></i><span><i></i><i></i></span></span>
+              </span>
+              <span class="opcao-tema-rodape"><span>Claro</span><span class="opcao-tema-status"></span><span class="opcao-tema-check" aria-hidden="true">✓</span></span>
+            </button>
 
-          <button
-              type="button"
-              class="opcao-tema"
-              data-tema="dark"
-              aria-pressed="false"
-          >
-            <span class="opcao-tema-icone" aria-hidden="true">☾</span>
-            <span>Modo escuro</span>
-            <span class="opcao-tema-check" aria-hidden="true">✓</span>
-          </button>
-        </div>
-      </section>
+            <button type="button" class="opcao-tema" data-tema="dark" aria-pressed="false">
+              <span class="tema-mini tema-mini-escuro" aria-hidden="true">
+                <span class="tema-mini-lateral"><i></i><i></i><i></i><i></i></span>
+                <span class="tema-mini-conteudo"><i class="tema-mini-titulo"></i><i></i><span><i></i><i></i></span></span>
+              </span>
+              <span class="opcao-tema-rodape"><span>Escuro</span><span class="opcao-tema-status"></span><span class="opcao-tema-check" aria-hidden="true">✓</span></span>
+            </button>
+          </div>
+
+          <hr class="preferencia-separador">
+
+          <section class="controle-leitura" aria-labelledby="titulo-tamanho-texto">
+            <h3 id="titulo-tamanho-texto">Conforto de leitura</h3>
+            <p class="mudo">Ajuste o tamanho do texto nas páginas.</p>
+            <label for="controle-tamanho-fonte">Tamanho do texto</label>
+            <div class="controle-fonte">
+              <span class="amostra-fonte amostra-fonte-pequena" aria-hidden="true">A</span>
+              <input id="controle-tamanho-fonte" type="range" min="0" max="2" step="1" value="1" aria-valuetext="Padrão">
+              <span class="amostra-fonte amostra-fonte-grande" aria-hidden="true">A</span>
+              <output id="valor-tamanho-fonte" for="controle-tamanho-fonte">Padrão</output>
+            </div>
+          </section>
+
+          <hr class="preferencia-separador">
+
+          <div class="preferencia-movimento">
+            <div>
+              <h3>Reduzir animações</h3>
+              <p class="mudo">Use menos movimentos ao navegar pelo sistema.</p>
+            </div>
+            <button type="button" class="interruptor" id="controle-reduzir-movimento" role="switch" aria-checked="false" aria-label="Reduzir animações"><span></span></button>
+          </div>
+        </section>
+
+        <aside class="aparencia-apoio" aria-label="Prévia e dica de aparência">
+          <section class="painel painel-previa-aparencia">
+            <h3>Prévia da sua área</h3>
+            <p class="mudo" id="rotulo-previa-tema">Assim fica o tema claro.</p>
+            <div class="mini-app" id="mini-app-previa" data-tema-previa="light" aria-hidden="true">
+              <div class="mini-app-lateral"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="mini-app-conteudo">
+                <strong>Bom dia, ${window.usuario.nome.split(' ')[0]}</strong>
+                <small>Seu plano de hoje</small>
+                <div class="mini-app-tarefa"><i></i><span><b>Revisar matéria</b><small>Hoje · 14h30</small></span></div>
+                <div class="mini-app-cartoes"><i></i><i></i></div>
+              </div>
+            </div>
+            <p class="nota-aplicacao">As mudanças são aplicadas automaticamente.</p>
+          </section>
+          <aside class="dica-aparencia">
+            <h3>Uma dica</h3>
+            <p>O tema escuro pode ajudar em ambientes com pouca luz. Você pode trocar quando quiser.</p>
+          </aside>
+        </aside>
+      </div>
 
 
       <!-- PRIVACIDADE E CONTA -->
@@ -654,7 +692,13 @@ async function pgConfiguracoes(el) {
 
         botao.classList.toggle('selecionado', selecionado);
         botao.setAttribute('aria-pressed', String(selecionado));
+        botao.querySelector('.opcao-tema-status').textContent = selecionado ? 'Atual' : '';
       });
+
+      const previa = el.querySelector('#mini-app-previa');
+      const rotulo = el.querySelector('#rotulo-previa-tema');
+      previa.dataset.temaPrevia = temaAtual;
+      rotulo.textContent = `Assim fica o tema ${temaAtual === 'dark' ? 'escuro' : 'claro'}.`;
     }
 
     botoesTema.forEach(botao => {
@@ -670,6 +714,37 @@ async function pgConfiguracoes(el) {
     });
 
     atualizarSelecaoTema();
+
+    // Tamanho do texto: a preferência fica salva neste navegador.
+    const controleFonte = el.querySelector('#controle-tamanho-fonte');
+    const rotulosFonte = ['Pequeno', 'Padrão', 'Grande'];
+    const niveisFonte = ['pequeno', 'padrao', 'grande'];
+    const indiceFonte = niveisFonte.indexOf(window.LearningScoreTema?.obterTamanhoFonte?.() || 'padrao');
+    controleFonte.value = String(indiceFonte < 0 ? 1 : indiceFonte);
+    const atualizarRotuloFonte = () => {
+      const rotulo = rotulosFonte[Number(controleFonte.value)];
+      controleFonte.setAttribute('aria-valuetext', rotulo);
+      el.querySelector('#valor-tamanho-fonte').textContent = rotulo;
+    };
+    atualizarRotuloFonte();
+    controleFonte.addEventListener('input', () => {
+      const nivel = niveisFonte[Number(controleFonte.value)];
+      window.LearningScoreTema?.definirTamanhoFonte?.(nivel);
+      atualizarRotuloFonte();
+    });
+
+    // A preferência de movimento também é lembrada neste navegador.
+    const controleMovimento = el.querySelector('#controle-reduzir-movimento');
+    const atualizarMovimento = reduzido => {
+      controleMovimento.setAttribute('aria-checked', String(reduzido));
+      controleMovimento.classList.toggle('ativo', reduzido);
+    };
+    atualizarMovimento(window.LearningScoreTema?.obterReducaoMovimento?.() || false);
+    controleMovimento.addEventListener('click', () => {
+      const reduzido = controleMovimento.getAttribute('aria-checked') !== 'true';
+      window.LearningScoreTema?.definirReducaoMovimento?.(reduzido);
+      atualizarMovimento(reduzido);
+    });
 
     // ========================================
     // PREFERÊNCIAS DE NOTIFICAÇÃO
