@@ -37,7 +37,18 @@ const ROTAS_INTERNAS = {
 const svg = n => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONES[n]}</svg>`;
 
 
+/* Iniciais para o avatar: "Igor Gonçalves" vira "IG" (ignora marcas como "[DEMO]") */
+function iniciais(nome) {
+  const partes = nome.replace(/\[.*?\]/g, '').trim().split(/\s+/).filter(Boolean);
+  if (!partes.length) return '?';
+  const primeira = partes[0][0];
+  const ultima = partes.length > 1 ? partes[partes.length - 1][0] : '';
+  return (primeira + ultima).toUpperCase();
+}
+
 function desenharMenu() {
+  const nome = window.usuario.nome;
+
   document.getElementById('lateral').innerHTML = html`
     <div class="menu-cabecalho">
       <a class="marca" href="#/dashboard"><img src="/img/logo-horizontal.png" alt="Learning Score"></a>
@@ -55,12 +66,16 @@ function desenharMenu() {
           )}
         </a>
       `)}
-
-      <button id="btn-sair">
-        ${raw(svg('sair'))}
-        <span>Sair (${window.usuario.nome})</span>
-      </button>
     </nav>
+
+    <div class="perfil">
+      <span class="perfil-avatar" aria-hidden="true">${iniciais(nome)}</span>
+      <div class="perfil-info">
+        <span class="perfil-nome">${nome}</span>
+        <a class="perfil-link" href="#/privacidade" data-rota="privacidade">Minha conta</a>
+      </div>
+      <button id="btn-sair" class="perfil-sair" aria-label="Sair" title="Sair">${raw(svg('sair'))}</button>
+    </div>
   `;
 
   // Botão de sair da conta
@@ -70,7 +85,6 @@ function desenharMenu() {
     } catch (e) {
       /* ignora erros de logout */
     }
-
     location.href = '/login.html';
   };
 }

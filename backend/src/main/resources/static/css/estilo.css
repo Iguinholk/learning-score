@@ -168,6 +168,8 @@ body.menu-fixo .app {
   overflow: hidden;
   transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 50;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Expande ao passar o mouse */
@@ -342,6 +344,88 @@ body:not(.menu-fixo) .lateral:not(:hover) .menu-cabecalho {
   font-size: .75rem;
   font-weight: 700;
   padding: 0 .5rem;
+}
+
+/* ----- Perfil do usuário (rodapé do menu lateral) ----- */
+.perfil {
+  margin-top: auto;               /* empurra o bloco para o fundo do menu */
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .9rem .5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
+.perfil-avatar {                  /* círculo com as iniciais */
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--tinta-2);
+  border: 1px solid rgba(255, 255, 255, .25);
+  color: #fff;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+.perfil-info {
+  flex: 1;
+  min-width: 0;                   /* permite cortar nomes longos com "..." */
+  white-space: nowrap;
+}
+
+.perfil-nome {
+  display: block;
+  font-size: .9rem;
+  font-weight: 600;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.perfil-link {
+  font-size: .8rem;
+  color: #DCE3F5;
+}
+
+.perfil-link:hover,
+.perfil-link[aria-current="page"] {
+  color: #fff;
+}
+
+.perfil-link[aria-current="page"] {
+  font-weight: 600;
+}
+
+.perfil-sair {
+  display: flex;
+  padding: .45rem;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  color: #DCE3F5;
+  cursor: pointer;
+}
+
+.perfil-sair:hover {
+  background: var(--tinta-2);
+  color: #fff;
+}
+
+/* Menu recolhido: só o círculo com as iniciais, centralizado */
+body:not(.menu-fixo) .lateral:not(:hover) .perfil {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+body:not(.menu-fixo) .lateral:not(:hover) .perfil-info,
+body:not(.menu-fixo) .lateral:not(:hover) .perfil-sair {
+  display: none;
 }
 
 /* ----- Área de conteúdo ----- */
@@ -1021,6 +1105,28 @@ dialog.modal::backdrop {        /* fundo escurecido */
     grid-template-columns: 1fr;
   }
 
+  /* Gaveta aberta no celular: mostra o perfil completo */
+  body.menu-aberto:not(.menu-fixo) .lateral:not(:hover) .perfil {
+    justify-content: flex-start;
+    padding-left: .5rem;
+    padding-right: .5rem;
+  }
+
+  body.menu-aberto:not(.menu-fixo) .lateral:not(:hover) .perfil-info {
+    display: block;
+  }
+
+  body.menu-aberto:not(.menu-fixo) .lateral:not(:hover) .perfil-sair {
+    display: flex;
+  }
+
+  /* Gaveta aberta no celular: mostra também os textos do menu */
+  body.menu-aberto:not(.menu-fixo) .lateral:not(:hover) nav a,
+  body.menu-aberto:not(.menu-fixo) .lateral:not(:hover) nav button {
+    font-size: inherit;
+    gap: .7rem;
+  }
+  
   .lateral {
     position: fixed;
     left: 0;
