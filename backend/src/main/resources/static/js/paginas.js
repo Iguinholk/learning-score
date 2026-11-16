@@ -840,16 +840,36 @@ async function pgConfiguracoes(el) {
 
 
 /* ---------- RF12 · Privacidade e conta ---------- */
+/* ---------- RF12 · Conta e privacidade (em abas) ---------- */
+let abaPrivacidade = 'conta';   // aba que está aberta
+
 async function pgPrivacidade(el) {
+  abaPrivacidade = 'conta';     // sempre abre na aba "Conta"
+  const abas = [{ id: 'conta', rotulo: 'Conta' }, { id: 'privacidade', rotulo: 'Privacidade' }];
+
+  // Troca de aba sem recarregar os dados
+  function mostrarAba(id) {
+    abaPrivacidade = id;
+    el.querySelectorAll('[role=tab]').forEach(b => {
+      const ativa = b.dataset.aba === id;
+      b.setAttribute('aria-selected', String(ativa));
+      b.tabIndex = ativa ? 0 : -1;
+    });
+    el.querySelectorAll('[role=tabpanel]').forEach(p => { p.hidden = p.id !== 'painel-' + id; });
+  }
+
   async function desenhar() {
     const m = await api.get('/api/privacidade/meus-dados');
     const cs = Object.fromEntries(m.consentimentos.map(c => [c.tipo, c]));
     const opcional = ['INTEGRACOES', 'USO_DADOS_EXTERNOS'];
-    el.innerHTML = html`${raw(cabecalho('Privacidade e conta', 'Seus dados, seus consentimentos e a exclusão da conta (LGPD).'))}
-      <section class="painel"><h2>Seus dados pessoais</h2>
+
+    // Conteúdo da aba CONTA
+    const painelConta = html`<section class="painel"><h2>Seus dados pessoais</h2>
         <dl><dt class="mudo">Nome</dt><dd>${m.conta.nome}</dd><dt class="mudo">E-mail</dt><dd>${m.conta.email}</dd><dt class="mudo">Perfil</dt><dd>${m.conta.papel}</dd><dt class="mudo">Conta criada em</dt><dd>${fmtDataHora(m.conta.criadoEm)}</dd></dl>
-        <p class="mudo">Registros armazenados: ${Object.entries(m.quantidades).map(([k, v]) => v + ' ' + k.replace(/([A-Z])/g, ' $1').toLowerCase()).join(', ')}.</p></section>
-      <section class="painel"><h2>Consentimentos</h2>
+        <p class="mudo">Registros armazenados: ${Object.entries(m.quantidades).map(([k, v]) => v + ' ' + k.replace(/([A-Z])/g, ' $1').toLowerCase()).join(', ')}.</p></section>`;
+
+    // Conteúdo da aba PRIVACIDADE (consentimentos + exclusão da conta)
+    const painelPrivacidade = html`<section class="painel"><h2>Consentimentos</h2>
         <p class="mudo">Termos de uso aceitos em ${cs.TERMOS_USO ? fmtDataHora(cs.TERMOS_USO.registradoEm) : '—'}.</p>
         ${lista(opcional, t => html`<div class="linha-check"><input type="checkbox" id="c-${t}" data-acao="consent" data-tipo="${t}" ${raw(cs[t] && cs[t].concedido ? 'checked' : '')}><label for="c-${t}">${rot(t)}</label></div>`)}
         <p class="mudo">Sem consentimento, integrações e sincronizações ficam bloqueadas. Você pode revogar a qualquer momento.</p></section>
@@ -857,12 +877,31 @@ async function pgPrivacidade(el) {
         ${raw(m.exclusao ? html`<div class="aviso erro">Solicitação registrada em ${fmtDataHora(m.exclusao.solicitadaEm)}. Sua conta e seus dados serão excluídos em até 24 horas.</div>
             <button class="btn sec" data-acao="cancelar-ex">Cancelar solicitação</button>`
           : html`<p>A exclusão remove permanentemente seus dados pessoais. Será mantido apenas o registro anônimo da solicitação.</p><button class="btn perigo" data-acao="excluir">Solicitar exclusão da conta</button>`)}</section>`;
+
+    el.innerHTML = html`${raw(cabecalho('Conta e privacidade', 'Seus dados e suas escolhas (LGPD).'))}
+      <div class="abas" role="tablist" aria-label="Seções da página">
+        ${lista(abas, a => html`<button class="aba" role="tab" id="aba-${a.id}" aria-controls="painel-${a.id}" aria-selected="${abaPrivacidade === a.id}" tabindex="${abaPrivacidade === a.id ? 0 : -1}" data-acao="aba" data-aba="${a.id}">${a.rotulo}</button>`)}
+      </div>
+      <div id="painel-conta" role="tabpanel" aria-labelledby="aba-conta" ${raw(abaPrivacidade === 'conta' ? '' : 'hidden')}>${raw(painelConta)}</div>
+      <div id="painel-privacidade" role="tabpanel" aria-labelledby="aba-privacidade" ${raw(abaPrivacidade === 'privacidade' ? '' : 'hidden')}>${raw(painelPrivacidade)}</div>`;
+
+    // Setas do teclado trocam de aba
+    el.querySelector('[role=tablist]').onkeydown = ev => {
+      if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+      const ids = abas.map(a => a.id);
+      const novo = ids[(ids.indexOf(abaPrivacidade) + (ev.key === 'ArrowRight' ? 1 : ids.length - 1)) % ids.length];
+      mostrarAba(novo);
+      el.querySelector('#aba-' + novo).focus();
+    };
+
     el.querySelectorAll('[data-acao=consent]').forEach(chk => chk.onchange = async () => {
       try { await api.put('/api/privacidade/consentimentos', { tipo: chk.dataset.tipo, concedido: chk.checked }); toast('Consentimento atualizado.'); }
       catch (e) { toast(e.message, 'erro'); chk.checked = !chk.checked; }
     });
   }
+
   delegar(el, {
+    aba: d => mostrarAba(d.aba),
     excluir: async () => { if (await abrirForm({ titulo: 'Confirmar exclusão da conta', intro: 'Digite sua senha para confirmar. Você terá um curto período para cancelar.', rotulo: 'Solicitar exclusão',
       campos: [{ name: 'senha', label: 'Senha', tipo: 'password', obrigatorio: true }],
       enviar: async v => { const r = await api.post('/api/privacidade/exclusao', { senha: v.senha }); toast(r.mensagem); } })) desenhar(); },

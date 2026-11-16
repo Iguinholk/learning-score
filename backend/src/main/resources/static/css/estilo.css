@@ -1929,3 +1929,35 @@ body.pagina-cadastro {
   .tema-mini { height: 100px; }
 }
 
+/* ----- Abas (Conta e Privacidade) ----- */
+.abas {
+  display: flex;
+  gap: .25rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--linha);
+}
+
+.aba {
+  margin-bottom: -1px;            /* a linha amarela cobre a borda da lista */
+  padding: .65rem 1.1rem;
+  background: none;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  color: var(--suave);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aba:hover {
+  color: var(--tinta);
+}
+
+.aba[aria-selected="true"] {
+  color: var(--tinta);
+  border-bottom-color: var(--grifo);
+}
+
+[role="tabpanel"][hidden] {
+  display: none;
+}
