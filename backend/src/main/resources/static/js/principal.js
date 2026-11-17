@@ -20,13 +20,13 @@ const ROTAS = [
   { rota: 'calendario', rotulo: 'Calendário', icone: 'calendario', fn: pgCalendario },
   { rota: 'academico', rotulo: 'Acadêmico', icone: 'academico', fn: pgAcademico },
   { rota: 'financeiro', rotulo: 'Financeiro', icone: 'financeiro', fn: pgFinanceiro },
-  { rota: 'notificacoes', rotulo: 'Notificações', icone: 'sino', fn: pgNotificacoes, selo: true },
   { rota: 'recomendacoes', rotulo: 'Recomendações', icone: 'estrela', fn: pgRecomendacoes },
   { rota: 'conteudos', rotulo: 'Conteúdos', icone: 'video', fn: pgConteudos },
   { rota: 'configuracoes', rotulo: 'Configurações', icone: 'engrenagem', fn: pgConfiguracoes },
 ];
 
 const ROTAS_INTERNAS = {
+  notificacoes: { rota: 'notificacoes', rotulo: 'Notificações', fn: pgNotificacoes },
   privacidade: {
     rota: 'privacidade',
     rotulo: 'Privacidade e conta',
@@ -96,6 +96,7 @@ async function atualizarSelo() {
     const s = document.getElementById('selo-notif'); if (!s) return;
     const n = d.indicadores.notificacoesNaoLidas; s.textContent = n; s.hidden = n === 0;
     s.setAttribute('aria-label', n + ' notificações não lidas');
+    s.closest('a').setAttribute('aria-label', n ? 'Notificações: ' + n + ' não lidas' : 'Notificações');
   } catch (e) { /* silencioso */ }
 }
 

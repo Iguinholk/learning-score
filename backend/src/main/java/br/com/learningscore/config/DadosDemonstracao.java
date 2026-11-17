@@ -150,6 +150,7 @@ public class DadosDemonstracao implements ApplicationRunner {
         c.setDescricao("Conteúdo fictício de demonstração (sem vídeo). Cadastre um link real do YouTube em Conteúdos para testar o mini-player.");
         c.setPalavrasChave(palavras);
         c.setAprovado(aprovado);
+        c.setStatusAvaliacao(aprovado ? br.com.learningscore.conteudo.StatusAvaliacao.APROVADO : br.com.learningscore.conteudo.StatusAvaliacao.PENDENTE);
         c.setAprovadoPor(aprovado && prof != null ? prof.getNome() : null);
         conteudos.save(c);
     }

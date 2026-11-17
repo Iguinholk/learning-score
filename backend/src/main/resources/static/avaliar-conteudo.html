@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow">
+<title>Avaliar conteúdo — Learning Score</title><link rel="stylesheet" href="/css/estilo.css"><link rel="icon" href="/img/favicon.ico">
+</head><body><main class="avaliacao-publica" id="conteudo">
+<img class="avaliacao-logo" src="/img/logo-completo-escuro.png" alt="Learning Score">
+<h1>Avaliar conteúdo</h1><p>Você não precisa criar uma conta. A decisão só será salva quando você confirmar.</p>
+<div id="mensagem-avaliacao" role="status" aria-live="polite">Carregando convite…</div>
+<section id="detalhes-avaliacao" class="painel" hidden><h2 id="titulo-avaliacao"></h2>
+<p id="descricao-avaliacao" class="texto-resposta"></p><p id="palavras-avaliacao"></p>
+<p><a id="video-avaliacao" target="_blank" rel="noopener noreferrer" hidden>Ver vídeo sugerido</a></p><p id="validade-avaliacao"></p></section>
+<form id="form-avaliacao" class="painel" hidden>
+<p id="decisao-avaliacao"></p>
+<label for="justificativa">Justificativa e links sugeridos</label>
+<textarea id="justificativa" name="justificativa" maxlength="4000" rows="7" required aria-describedby="ajuda-justificativa"></textarea>
+<p id="ajuda-justificativa">Explique sua decisão. Se quiser, inclua links completos começando com https:// ou http://. Até 4.000 caracteres.</p>
+<button class="btn" type="submit" id="confirmar-avaliacao">Confirmar decisão</button>
+</form></main><script src="/js/core.js"></script><script src="/js/avaliar-conteudo.js"></script></body></html>

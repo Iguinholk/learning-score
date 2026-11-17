@@ -47,7 +47,7 @@ Com `DEMO_ENABLED=true` são criados (todos **fictícios**, com prefixo `[DEMO]`
 - Estudante: `demo@learningscore.local` / `Demo@12345`
 - Professor (pode aprovar conteúdos): `professor.demo@learningscore.local` / `Demo@12345`
 - 3 disciplinas, notas, 6 atividades (uma atrasada, uma concluída), eventos, 3 mensalidades e conteúdos.
-Os conteúdos de demonstração **não têm vídeo**. Para testar o mini-player, use *Conteúdos → Sugerir conteúdo* com um link real do YouTube, entre como professor e aprove.
+Os conteúdos de demonstração **não têm vídeo**. Para testar o mini-player, use *Conteúdos → Sugerir conteúdo* com um link real do YouTube, informe o e-mail do professor e aguarde a confirmação pelo convite.
 
 ## Testes
 ```bash
@@ -113,7 +113,7 @@ Exclusão de conta: `ON DELETE CASCADE` nas tabelas do estudante; `solicitacao_e
 | RF04 | `/api/disciplinas`, `/api/notas`, `/api/financeiro` — cadastro manual, avisos de que não são dados oficiais |
 | RF05/06 | `/api/calendario?ano=&mes=` (prazos + eventos), visão mensal, CRUD `/api/eventos` |
 | RF07/08 | notificações internas geradas por fatos reais; preferências no banco |
-| RF09 | compatibilidade = palavras-chave da disciplina presentes no conteúdo ÷ total de palavras da disciplina (≥ 80%); só conteúdos aprovados por **professor**; até 3 por disciplina (se houver menos conteúdos elegíveis, a tela informa — não completamos com itens incompatíveis) |
+| RF09 | compatibilidade = palavras-chave da disciplina presentes no conteúdo ÷ total de palavras da disciplina (≥ 80%); só conteúdos aprovados por **professor convidado por e-mail**; até 3 por disciplina (se houver menos conteúdos elegíveis, a tela informa — não completamos com itens incompatíveis) |
 | RF10 | cadastro/login/logout, sessão + CSRF, plataformas associadas por estudante, `ConectorPlataforma` como ponto de extensão OAuth 2.0. **Todas as integrações são simulação** (identificadas na tela e no histórico) |
 | RF11 | mini-player (YouTube/Vimeo por lista de permissão), minimiza e persiste ao navegar |
 | RF12 | consulta de dados, consentimentos, solicitação com senha, cancelamento, exclusão processada em ≤ 1 h (a cada 10 min; limite 24 h), e-mail só se SMTP configurado |
@@ -134,7 +134,7 @@ Todos exigem sessão, exceto `register` e `login`. Requisições que alteram dad
 | `GET /api/notificacoes` · `PATCH /api/notificacoes/{id}/lida` · `POST /api/notificacoes/marcar-todas-lidas` · `DELETE /api/notificacoes/{id}` | notificações |
 | `GET/PUT /api/preferencias-notificacao` | preferências |
 | `GET /api/recomendacoes` | recomendações por disciplina |
-| `GET/POST /api/conteudos` · `GET /api/conteudos/pendentes` · `PATCH /api/conteudos/{id}/aprovar` (professor) | conteúdos |
+| `GET/POST /api/conteudos` · `GET /api/conteudos/minhas-sugestoes` · `POST /api/conteudos/{id}/reenviar-convite` | conteúdos |
 | `GET/POST /api/integracoes` · `DELETE /api/integracoes/{id}` · `POST /api/integracoes/{id}/sincronizar` · `GET /api/integracoes/historico` | integrações (simuladas) |
 | `GET /api/privacidade/meus-dados` · `GET/PUT /api/privacidade/consentimentos` · `POST/DELETE /api/privacidade/exclusao` | privacidade |
 
@@ -151,3 +151,41 @@ Todos exigem sessão, exceto `register` e `login`. Requisições que alteram dad
 1. `mvn test` → corrigir eventuais erros de compilação.
 2. Subir o banco e `mvn spring-boot:run` → conferir no log a execução da migração V1 e a mensagem dos dados de demonstração.
 3. Entrar com o usuário demo e percorrer as 13 telas; criar uma segunda conta e confirmar que não enxerga dados do demo.
+
+## Ajustes de interface e cadastro (17/11/2026)
+
+- Notificações: acesso pelo sino no Dashboard, com contador de não lidas; a rota continua disponível e saiu do menu lateral.
+- Mobile: logo no cabeçalho com link para o Dashboard.
+- Cadastro: consentimentos de integrações e uso de dados externos são opcionais, independentes e desmarcados por padrão. As escolhas são gravadas na mesma transação da criação da conta e podem ser alteradas em Privacidade e conta.
+- Notas: média simples (soma das notas dividida pela quantidade), incluindo notas antigas. O peso saiu do formulário, da tabela e dos DTOs da API. A coluna legada permanece no banco para compatibilidade; não influencia os cálculos. A escala continua de 0 a 10.
+- Não é necessária migração de banco para estes ajustes.
+
+## Valor da prova e logo mobile
+
+O cabeçalho mobile usa logo-completo-escuro.png. Ao lançar ou editar notas, informe a nota obtida e o valor da prova (de 0,01 até 10, campo inicialmente em branco e obrigatório). A nota obtida não pode ultrapassar o valor da prova. O valor da prova fica salvo e visível na tabela; a média simples continua usando as notas obtidas.
+
+A migração Flyway V2 adiciona o valor da avaliação ao banco e atribui 10 às avaliações existentes. Ela é aplicada automaticamente na próxima inicialização do backend.
+
+## Avaliação de conteúdo por e-mail
+
+Em Conteúdos → Sugerir conteúdo, os quatro campos existentes foram mantidos e foi acrescentado somente E-mail do professor. O estudante é identificado pela sessão; o endereço para receber o resultado vem da conta autenticada.
+
+A sugestão começa PENDENTE. O professor recebe os detalhes e os botões Aprovar e Recusar, sem precisar de conta. Os botões abrem /avaliar-conteudo.html e apenas consultam o convite. A resposta exige confirmação por POST com CSRF e o campo único Justificativa e links sugeridos (obrigatório, até 4.000 caracteres). Somente essa confirmação aprova ou recusa. O catálogo e as recomendações continuam mostrando apenas aprovados.
+
+O estudante consulta suas próprias sugestões em Conteúdos → Minhas sugestões, com decisão, data, justificativa e links http(s) clicáveis. O catálogo compartilhado não expõe a justificativa ou os e-mails. O antigo endpoint de aprovação por perfil de professor foi removido. Perfis e dados anteriores foram preservados.
+
+### Configurar o envio
+
+Defina SPRING_MAIL_HOST, SPRING_MAIL_PORT, SPRING_MAIL_USERNAME, SPRING_MAIL_PASSWORD e MAIL_FROM no ambiente. Use PUBLIC_BASE_URL com a URL HTTPS pública da instalação: localhost só serve para testar na própria máquina. O link precisa ser acessível ao professor. SMTP_AUTH e SMTP_STARTTLS_ENABLE começam true; ajuste conforme o provedor. Para SMTP com SSL implícito (porta 465), configure também spring.mail.properties.mail.smtp.ssl.enable e desative STARTTLS conforme o provedor. As conexões SMTP têm limite de cinco segundos para conexão, leitura e escrita. Nunca grave credenciais no código nem versione .env.
+
+AVALIACAO_VALIDADE_HORAS define a validade do convite (72 horas por padrão; entre 1 e 168). O token contém 32 bytes aleatórios, só seu SHA-256 vai para o banco e a confirmação remove o hash. Os dois botões compartilham o mesmo convite: apenas uma resposta vence, inclusive em acessos simultâneos. O token fica no fragmento do link, não é enviado na URL HTTP e é retirado do histórico ao abrir a página. Não encaminhe o convite: quem o possui pode responder.
+
+### Falha de e-mail e migração
+
+A migração Flyway V3 é aplicada ao iniciar. Conteúdos antigos aprovados continuam aprovados. Pendentes antigos sem e-mail do professor devem ser sugeridos novamente; não foram inventadas respostas para eles.
+
+O envio só é tentado depois de salvar a transação. Sem SMTP ou com falha de envio, a sugestão continua salva e a tela informa que o convite não foi enviado. O estudante pode reenviar (intervalo mínimo de um minuto); isso gera uma chave nova, renova a validade e invalida a anterior. A resposta confirmada permanece salva mesmo se o e-mail do resultado falhar; o resultado é consultável imediatamente no aplicativo e o envio é tentado novamente a cada dez minutos, em lotes de até 50. O envio usa o EmailService já existente. Como em SMTP em geral, uma interrupção logo após a aceitação pode causar duplicidade de e-mail numa nova tentativa; não permite duplicar a decisão.
+
+### Verificação
+
+Execute mvn test em backend para os testes unitários. Para os testes HTTP completos, prepare um banco PostgreSQL separado e defina LS_TEST_DB_URL, LS_TEST_DB_USER e LS_TEST_DB_PASSWORD (nunca use o banco de produção). Os testes de integração são ignorados quando LS_TEST_DB_URL não está definido. Eles verificam migrações, isolamento, CSRF, expiração, reenvio, recusa, aprovação, falha de SMTP e duas confirmações simultâneas. Os e-mails são simulados nesses testes; a entrega real deve ser validada com o SMTP da instalação.

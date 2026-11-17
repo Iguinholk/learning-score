@@ -30,6 +30,37 @@ public class Conteudo extends EntidadeBase {
     @Column(name = "aprovado_por", length = 120)
     private String aprovadoPor;
 
+    @Column(name = "url_video", length = 300)
+    private String urlVideo;
+
+    @Column(name = "email_professor", length = 180)
+    private String emailProfessor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_avaliacao", nullable = false, length = 16)
+    private StatusAvaliacao statusAvaliacao = StatusAvaliacao.PENDENTE;
+
+    @Column(name = "token_hash", length = 64, unique = true)
+    private String tokenHash;
+
+    @Column(name = "token_expira_em")
+    private java.time.Instant tokenExpiraEm;
+
+    @Column(name = "convite_em")
+    private java.time.Instant conviteEm;
+
+    @Column(name = "respondido_em")
+    private java.time.Instant respondidoEm;
+
+    @Column(length = 4000)
+    private String justificativa;
+
+    @Column(name = "email_convite_enviado", nullable = false)
+    private boolean emailConviteEnviado;
+
+    @Column(name = "email_resultado_enviado", nullable = false)
+    private boolean emailResultadoEnviado;
+
     @Column(name = "sugerido_por")
     private Long sugeridoPor;
 }

@@ -27,6 +27,8 @@ public class UsuarioService {
         u.setSenhaHash(encoder.encode(req.senha()));   // BCrypt (nunca guardamos a senha em texto)
         u = repo.save(u);
         consentimentos.registrar(u.getId(), TipoConsentimento.TERMOS_USO, true);
+        consentimentos.registrar(u.getId(), TipoConsentimento.INTEGRACOES, req.consentiuIntegracoes());
+        consentimentos.registrar(u.getId(), TipoConsentimento.USO_DADOS_EXTERNOS, req.consentiuUsoDadosExternos());
         return u;
     }
 }

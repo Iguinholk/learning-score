@@ -1,6 +1,7 @@
 package br.com.learningscore.dadosacademicos;
 
 import br.com.learningscore.common.RecursoNaoEncontradoException;
+import br.com.learningscore.common.RegraNegocioException;
 import br.com.learningscore.dadosacademicos.AcademicoDtos.*;
 import br.com.learningscore.notificacao.NotificacaoService;
 import br.com.learningscore.notificacao.TipoNotificacao;
@@ -22,14 +23,14 @@ public class DisciplinaService {
     private final UsuarioRepository usuarios;
     private final NotificacaoService notificacoes;
 
-    /** Média ponderada pelo peso; null se ainda não há notas. */
+    /** Média simples das avaliações; null se ainda não há notas. */
     public static BigDecimal calcularMedia(List<Nota> lista) {
-        BigDecimal soma = BigDecimal.ZERO, pesos = BigDecimal.ZERO;
+        if (lista.isEmpty()) return null;
+        BigDecimal soma = BigDecimal.ZERO;
         for (Nota n : lista) {
-            soma = soma.add(n.getValor().multiply(n.getPeso()));
-            pesos = pesos.add(n.getPeso());
+            soma = soma.add(n.getValor());
         }
-        return pesos.signum() == 0 ? null : soma.divide(pesos, 2, RoundingMode.HALF_UP);
+        return soma.divide(BigDecimal.valueOf(lista.size()), 2, RoundingMode.HALF_UP);
     }
 
     static DisciplinaResponse paraResposta(Disciplina d) {
@@ -105,9 +106,13 @@ public class DisciplinaService {
     }
 
     private void aplicarNota(Nota n, NotaRequest r) {
+        if (r.valor().compareTo(r.valorAvaliacao()) > 0) {
+            throw new RegraNegocioException("A nota obtida não pode ultrapassar o valor da prova.");
+        }
+        n.setValorAvaliacao(r.valorAvaliacao());
         n.setDescricao(r.descricao().trim());
         n.setValor(r.valor());
-        n.setPeso(r.peso() == null ? BigDecimal.ONE : r.peso());
+        n.setPeso(BigDecimal.ONE); // Coluna legada preservada por compatibilidade com o banco.
         n.setDataLancamento(r.dataLancamento());
     }
 }

@@ -22,6 +22,9 @@ public class Nota extends EntidadeBase {
     @Column(nullable = false, precision = 4, scale = 2)
     private BigDecimal valor;
 
+    @Column(name = "valor_avaliacao", nullable = false, precision = 4, scale = 2)
+    private BigDecimal valorAvaliacao = BigDecimal.TEN;
+
     @Column(nullable = false, precision = 4, scale = 2)
     private BigDecimal peso = BigDecimal.ONE;
 

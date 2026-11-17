@@ -64,6 +64,8 @@ public class SecurityConfig {
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/avaliacoes-conteudo").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/avaliacoes-conteudo/confirmar").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll())          // arquivos estáticos (HTML/CSS/JS); os dados só vêm da API
             .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

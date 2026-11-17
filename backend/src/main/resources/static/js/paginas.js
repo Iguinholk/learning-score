@@ -36,7 +36,7 @@ async function pgDashboard(el) {
     ${raw(cabecalho(
         d.saudacao + ', ' + d.nome + '!',
         'Veja o que precisa da sua atenção hoje.',
-        '<a class="btn" href="#/atividades">Ver todas as atividades</a>'
+        `<a class="btn sec sino-notificacoes" href="#/notificacoes" aria-label="Notificações" title="Notificações">${svg('sino')}<span class="selo" id="selo-notif" hidden></span></a><a class="btn" href="#/atividades">Ver todas as atividades</a>`
     ))}
 
 
@@ -307,10 +307,14 @@ async function pgAcademico(el) {
     { name: 'frequenciaPercentual', label: 'Frequência (%) — se disponível', tipo: 'number', passo: '0.01', min: 0, maxVal: 100 }];
   const camposNota = [
     { name: 'descricao', label: 'Avaliação', obrigatorio: true, max: 120 },
-    { name: 'valor', label: 'Nota (0 a 10)', tipo: 'number', passo: '0.01', min: 0, maxVal: 10, obrigatorio: true },
-    { name: 'peso', label: 'Peso', tipo: 'number', passo: '0.01', min: 0.01 }, { name: 'dataLancamento', label: 'Data', tipo: 'date', obrigatorio: true }];
+    { name: 'valorAvaliacao', label: 'Valor da prova (máximo 10)', tipo: 'number', passo: '0.01', min: 0.01, maxVal: 10, obrigatorio: true },
+    { name: 'valor', label: 'Nota obtida', tipo: 'number', passo: '0.01', min: 0, maxVal: 10, obrigatorio: true },
+    { name: 'dataLancamento', label: 'Data', tipo: 'date', obrigatorio: true }];
   const corpoDisc = v => ({ nome: v.nome, professor: v.professor || null, palavrasChave: v.palavrasChave || '', frequenciaPercentual: v.frequenciaPercentual === '' ? null : Number(v.frequenciaPercentual) });
-  const corpoNota = v => ({ descricao: v.descricao, valor: Number(v.valor), peso: v.peso === '' ? null : Number(v.peso), dataLancamento: v.dataLancamento });
+  const corpoNota = v => {
+    if (Number(v.valor) > Number(v.valorAvaliacao)) throw new Error('A nota obtida não pode ultrapassar o valor da prova.');
+    return { descricao: v.descricao, valor: Number(v.valor), valorAvaliacao: Number(v.valorAvaliacao), dataLancamento: v.dataLancamento };
+  };
 
   async function desenhar() {
     discs = await api.get('/api/disciplinas');
@@ -320,9 +324,9 @@ async function pgAcademico(el) {
       ${lista(discs, d => html`<section class="painel"><div class="pg-head" style="margin-bottom:.5rem"><div><h2>${d.nome}</h2><p>${d.professor || 'Professor não informado'}</p></div>
         <div class="acoes"><button class="btn sec peq" data-acao="nova-nota" data-id="${d.id}">Lançar nota</button><button class="btn sec peq" data-acao="ed-disc" data-id="${d.id}">Editar</button>
         <button class="btn perigo peq" data-acao="ex-disc" data-id="${d.id}">Excluir</button></div></div>
-        <p><strong>Média ponderada:</strong> ${fmtNum(d.media)} &nbsp; <strong>Frequência:</strong> ${d.frequenciaPercentual == null ? '—' : fmtNum(d.frequenciaPercentual) + '%'}</p>
-        ${raw(d.notas.length ? html`<div class="tabela-rolagem"><table><caption class="sr-only">Notas de ${d.nome}</caption><thead><tr><th scope="col">Avaliação</th><th scope="col">Data</th><th scope="col">Nota</th><th scope="col">Peso</th><th scope="col">Ações</th></tr></thead>
-          <tbody>${lista(d.notas, n => html`<tr><td>${n.descricao}</td><td>${fmtData(n.dataLancamento)}</td><td>${fmtNum(n.valor)}</td><td>${fmtNum(n.peso)}</td>
+        <p><strong>Média simples:</strong> ${fmtNum(d.media)} &nbsp; <strong>Frequência:</strong> ${d.frequenciaPercentual == null ? '—' : fmtNum(d.frequenciaPercentual) + '%'}</p>
+        ${raw(d.notas.length ? html`<div class="tabela-rolagem"><table><caption class="sr-only">Notas de ${d.nome}</caption><thead><tr><th scope="col">Avaliação</th><th scope="col">Data</th><th scope="col">Nota obtida</th><th scope="col">Valor da prova</th><th scope="col">Ações</th></tr></thead>
+          <tbody>${lista(d.notas, n => html`<tr><td>${n.descricao}</td><td>${fmtData(n.dataLancamento)}</td><td>${fmtNum(n.valor)}</td><td>${fmtNum(n.valorAvaliacao)}</td>
             <td><div class="acoes"><button class="btn sec peq" data-acao="ed-nota" data-id="${n.id}" data-disc="${d.id}">Editar</button><button class="btn perigo peq" data-acao="ex-nota" data-id="${n.id}">Excluir</button></div></td></tr>`)}</tbody></table></div>`
           : '<p class="vazio">Sem notas lançadas.</p>')}</section>`)}`;
   }
@@ -331,7 +335,7 @@ async function pgAcademico(el) {
     'nova-disc': async () => { if (await abrirForm({ titulo: 'Nova disciplina', campos: camposDisc, enviar: v => api.post('/api/disciplinas', corpoDisc(v)) })) { toast('Disciplina criada.'); desenhar(); } },
     'ed-disc': async d => { if (await abrirForm({ titulo: 'Editar disciplina', campos: camposDisc, valores: disc(d.id), enviar: v => api.put('/api/disciplinas/' + d.id, corpoDisc(v)) })) { toast('Disciplina atualizada.'); desenhar(); } },
     'ex-disc': async d => { if (await confirmar('Excluir a disciplina e suas notas?', 'Excluir')) { await api.del('/api/disciplinas/' + d.id); toast('Disciplina excluída.'); desenhar(); } },
-    'nova-nota': async d => { if (await abrirForm({ titulo: 'Lançar nota', campos: camposNota, valores: { peso: 1, dataLancamento: hojeISO() }, enviar: v => api.post(`/api/disciplinas/${d.id}/notas`, corpoNota(v)) })) { toast('Nota lançada.'); desenhar(); } },
+    'nova-nota': async d => { if (await abrirForm({ titulo: 'Lançar nota', campos: camposNota, valores: { dataLancamento: hojeISO() }, enviar: v => api.post(`/api/disciplinas/${d.id}/notas`, corpoNota(v)) })) { toast('Nota lançada.'); desenhar(); } },
     'ed-nota': async d => { const n = disc(d.disc).notas.find(x => String(x.id) === d.id);
       if (await abrirForm({ titulo: 'Editar nota', campos: camposNota, valores: n, enviar: v => api.put('/api/notas/' + d.id, corpoNota(v)) })) { toast('Nota atualizada.'); desenhar(); } },
     'ex-nota': async d => { if (await confirmar('Excluir esta nota?', 'Excluir')) { await api.del('/api/notas/' + d.id); toast('Nota excluída.'); desenhar(); } }
@@ -408,25 +412,35 @@ async function pgRecomendacoes(el) {
 /* ---------- RF11 · Conteúdos e mini-player ---------- */
 async function pgConteudos(el) {
   async function desenhar() {
-    const [lst, pend] = await Promise.all([api.get('/api/conteudos'), api.get('/api/conteudos/pendentes')]);
-    const prof = window.usuario.papel === 'PROFESSOR';
+    const [lst, minhas] = await Promise.all([api.get('/api/conteudos'), api.get('/api/conteudos/minhas-sugestoes')]);
     window._conts = lst;
-    el.innerHTML = html`${raw(cabecalho('Conteúdos', 'Vídeos educacionais aprovados. O player continua aberto enquanto você navega.', '<button class="btn" data-acao="sugerir">Sugerir conteúdo</button>'))}
+    const status = { PENDENTE: 'Pendente de avaliação', APROVADO: 'Aprovado', RECUSADO: 'Recusado' };
+    el.innerHTML = html`${raw(cabecalho('Conteúdos', 'Sugira vídeos e acompanhe a resposta do professor.', '<button class="btn" data-acao="sugerir">Sugerir conteúdo</button>'))}
       <section class="painel"><h2>Conteúdos aprovados</h2>${raw(!lst.length ? '<p class="vazio">Nenhum conteúdo aprovado.</p>' : '')}
         ${lista(lst, c => html`<div class="cartao"><strong>${c.titulo}</strong><p class="mudo">${c.descricao || ''}</p><p class="mudo">Palavras-chave: ${c.palavrasChave || '—'} · Aprovado por ${c.aprovadoPor || '—'}</p>
           ${raw(c.urlEmbed ? html`<button class="btn peq" data-acao="tocar" data-id="${c.id}">Assistir no mini-player</button>` : '<span class="mudo">Sem vídeo.</span>')}</div>`)}</section>
-      <section class="painel"><h2>${prof ? 'Aguardando aprovação' : 'Suas sugestões em análise'}</h2>${raw(!pend.length ? '<p class="vazio">Nada pendente.</p>' : '')}
-        ${lista(pend, c => html`<div class="cartao"><strong>${c.titulo}</strong><p class="mudo">${c.descricao || ''}</p>
-          ${raw(prof ? html`<button class="btn peq" data-acao="aprovar" data-id="${c.id}">Aprovar conteúdo</button>` : '<span class="badge b-PENDENTE">Em análise por professor</span>')}</div>`)}</section>`;
+      <section class="painel"><h2>Minhas sugestões</h2>${raw(!minhas.length ? '<p class="vazio">Você ainda não enviou sugestões.</p>' : '')}
+        ${lista(minhas, c => html`<article class="cartao"><h3>${c.titulo}</h3><p class="mudo">${c.descricao || ''}</p>
+          <p><strong>${status[c.status] || c.status}</strong></p>
+          ${raw(c.respondidoEm ? html`<p>Respondido em ${fmtDataHora(c.respondidoEm)}</p><h4>Justificativa e links sugeridos</h4><p class="texto-resposta">${c.justificativa || 'Sem justificativa registrada.'}</p>
+            <ul class="links-professor">${lista(c.linksSugeridos || [], url => html`<li><a href="${ligacaoSegura(url)}" target="_blank" rel="noopener noreferrer">${url}</a></li>`)}</ul>
+            <p class="mudo">${c.emailResultadoEnviado ? 'Resultado enviado por e-mail.' : 'O e-mail com o resultado está aguardando envio. A resposta já está salva aqui.'}</p>`
+            : c.status === 'PENDENTE' && c.emailProfessor ? html`<p>Professor: ${c.emailProfessor}</p>
+              <p class="mudo">${c.emailConviteEnviado ? 'Convite enviado por e-mail.' : 'O convite ainda não foi enviado. Verifique a configuração de e-mail e tente reenviar.'}</p>
+              <p class="mudo">Convite válido até ${fmtDataHora(c.expiraEm)}. Reenviar invalida o convite anterior.</p>
+              <button class="btn sec peq" data-acao="reenviar" data-id="${c.id}">Reenviar convite</button>`
+            : c.status === 'PENDENTE' ? '<p class="mudo">Sugestão antiga: envie novamente informando o e-mail do professor.</p>' : '<p class="mudo">Avaliação anterior à atualização, sem justificativa registrada.</p>')}
+        </article>`)}</section>`;
   }
   delegar(el, {
     tocar: d => { const c = window._conts.find(x => String(x.id) === d.id); player.abrir(c.titulo, c.urlEmbed); },
-    aprovar: async d => { await api.patch(`/api/conteudos/${d.id}/aprovar`); toast('Conteúdo aprovado.'); desenhar(); },
-    sugerir: async () => { if (await abrirForm({ titulo: 'Sugerir conteúdo', intro: 'Ele só aparecerá como aprovado depois da verificação de um professor.',
+    reenviar: async d => { try { await api.post('/api/conteudos/' + d.id + '/reenviar-convite'); toast('Novo convite solicitado. Confira o status abaixo.'); await desenhar(); } catch (e) { toast(e.message, 'erro'); } },
+    sugerir: async () => { if (await abrirForm({ titulo: 'Sugerir conteúdo', intro: 'O professor receberá um convite por e-mail. O conteúdo só será aprovado depois que ele confirmar.',
       campos: [{ name: 'titulo', label: 'Título', obrigatorio: true, max: 160 }, { name: 'descricao', label: 'Descrição', tipo: 'textarea', max: 1000 },
         { name: 'urlVideo', label: 'Link do vídeo (YouTube ou Vimeo)', tipo: 'url', max: 300, dica: 'Exemplo: https://www.youtube.com/watch?v=...' },
-        { name: 'palavrasChave', label: 'Palavras-chave', max: 500, dica: 'Separe por vírgulas.' }],
-      enviar: v => api.post('/api/conteudos', { titulo: v.titulo, descricao: v.descricao || null, urlVideo: v.urlVideo || null, palavrasChave: v.palavrasChave || '' }) })) { toast('Sugestão enviada para aprovação.'); desenhar(); } }
+        { name: 'palavrasChave', label: 'Palavras-chave', max: 500, dica: 'Separe por vírgulas.' },
+        { name: 'emailProfessor', label: 'E-mail do professor', tipo: 'email', obrigatorio: true, max: 180 }],
+      enviar: v => api.post('/api/conteudos', { titulo: v.titulo, descricao: v.descricao || null, urlVideo: v.urlVideo || null, palavrasChave: v.palavrasChave || '', emailProfessor: v.emailProfessor.trim() }) })) { toast('Sugestão registrada. Confira abaixo o envio do convite.'); await desenhar(); } }
   });
   await desenhar();
 }

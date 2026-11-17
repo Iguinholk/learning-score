@@ -33,7 +33,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class, ConstraintViolationException.class,
-            org.springframework.web.bind.MissingServletRequestParameterException.class})
+            org.springframework.web.bind.MissingServletRequestParameterException.class,
+            org.springframework.web.bind.MissingRequestHeaderException.class})
     public ResponseEntity<ErroApi> requisicaoInvalida(Exception ex) {
         return ResponseEntity.badRequest().body(ErroApi.de(400, "Requisição inválida", "Formato de dados incorreto."));
     }

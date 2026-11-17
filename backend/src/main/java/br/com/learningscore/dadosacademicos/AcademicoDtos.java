@@ -17,12 +17,12 @@ public final class AcademicoDtos {
     public record NotaRequest(
             @NotBlank @Size(max = 120) String descricao,
             @NotNull @DecimalMin("0") @DecimalMax("10") BigDecimal valor,
-            @DecimalMin(value = "0.01", message = "O peso deve ser maior que zero") BigDecimal peso,
+            @NotNull @DecimalMin("0.01") @DecimalMax("10") @Digits(integer = 2, fraction = 2) BigDecimal valorAvaliacao,
             @NotNull LocalDate dataLancamento) {}
 
-    public record NotaResponse(Long id, Long disciplinaId, String descricao, BigDecimal valor, BigDecimal peso, LocalDate dataLancamento) {
+    public record NotaResponse(Long id, Long disciplinaId, String descricao, BigDecimal valor, BigDecimal valorAvaliacao, LocalDate dataLancamento) {
         static NotaResponse de(Nota n) {
-            return new NotaResponse(n.getId(), n.getDisciplina().getId(), n.getDescricao(), n.getValor(), n.getPeso(), n.getDataLancamento());
+            return new NotaResponse(n.getId(), n.getDisciplina().getId(), n.getDescricao(), n.getValor(), n.getValorAvaliacao(), n.getDataLancamento());
         }
     }
 

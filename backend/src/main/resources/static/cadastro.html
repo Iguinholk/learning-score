@@ -160,6 +160,13 @@
           </button>
         </div>
 
+        <fieldset class="cadastro-consentimentos">
+          <legend>Consentimentos opcionais</legend>
+          <p>Você pode criar sua conta sem autorizar e alterar suas escolhas em Privacidade e conta.</p>
+          <div class="cadastro-termos"><input id="consent-integracoes" type="checkbox"><label for="consent-integracoes">Autorizo a associação e a sincronização de plataformas externas que eu conectar.</label></div>
+          <div class="cadastro-termos"><input id="consent-dados" type="checkbox"><label for="consent-dados">Autorizo o uso dos meus dados acadêmicos de plataformas externas no Learning Score.</label></div>
+        </fieldset>
+
         <!-- Aceite dos termos -->
         <div class="cadastro-termos">
           <input
@@ -276,7 +283,9 @@
         nome,
         email,
         senha,
-        aceitouTermos: termos
+        aceitouTermos: termos,
+        consentiuIntegracoes: document.getElementById('consent-integracoes').checked,
+        consentiuUsoDadosExternos: document.getElementById('consent-dados').checked
       });
 
       await api.post('/api/auth/login', {
