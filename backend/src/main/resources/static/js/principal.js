@@ -100,13 +100,42 @@ async function atualizarSelo() {
   } catch (e) { /* silencioso */ }
 }
 
+const telaMobile = window.matchMedia('(max-width: 900px)');
+function definirMenuMobile(aberto, devolverFoco = false) {
+  aberto = telaMobile.matches && aberto;
+  document.body.classList.toggle('menu-aberto', aberto);
+  const botao = document.getElementById('btn-menu');
+  botao.setAttribute('aria-expanded', String(aberto));
+  botao.textContent = aberto ? 'Fechar menu' : 'Menu';
+  document.getElementById('fundo-menu').hidden = !aberto;
+  document.getElementById('lateral').inert = telaMobile.matches && !aberto;
+  document.getElementById('conteudo').inert = aberto;
+  if (devolverFoco && telaMobile.matches) botao.focus();
+}
+
+function configurarMenuMobile() {
+  const topo = document.querySelector('.topo-mobile');
+  const medirTopo = () => document.documentElement.style.setProperty('--altura-topo-mobile', Math.ceil(topo.getBoundingClientRect().height) + 'px');
+  new ResizeObserver(medirTopo).observe(topo);
+  const botao = document.getElementById('btn-menu');
+  botao.onclick = () => definirMenuMobile(!document.body.classList.contains('menu-aberto'));
+  document.getElementById('fundo-menu').onclick = () => definirMenuMobile(false, true);
+  document.getElementById('lateral').addEventListener('click', ev => {
+    if (ev.target.closest('a[href]')) definirMenuMobile(false, true);
+  });
+  document.addEventListener('keydown', ev => {
+    if (ev.key === 'Escape' && document.body.classList.contains('menu-aberto')) definirMenuMobile(false, true);
+  });
+  telaMobile.addEventListener('change', () => definirMenuMobile(false));
+  definirMenuMobile(false);
+}
+
 async function rotear() {
   const main = document.getElementById('conteudo');
   const partes = (location.hash || '#/dashboard').replace(/^#\/?/, '').split('/');
   const nome = partes[0] || 'dashboard';
   limparGraficos();
-  document.body.classList.remove('menu-aberto');
-  document.getElementById('btn-menu').setAttribute('aria-expanded', 'false');
+  definirMenuMobile(false);
   document.querySelectorAll('#lateral [data-rota]').forEach(a => { if (a.dataset.rota === nome) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   main.innerHTML = '<p class="vazio">Carregando…</p>';
   try {
@@ -140,7 +169,7 @@ async function rotear() {
   try { window.usuario = await api.get('/api/auth/me'); }
   catch (e) { location.href = '/login.html'; return; }
   desenharMenu();
-  document.getElementById('btn-menu').onclick = e => { const a = document.body.classList.toggle('menu-aberto'); e.currentTarget.setAttribute('aria-expanded', String(a)); };
+  configurarMenuMobile();
   document.getElementById('player-min').onclick = () => player.minimizar();
   document.getElementById('player-fechar').onclick = () => player.fechar();
   window.addEventListener('hashchange', rotear);

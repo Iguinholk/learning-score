@@ -23,12 +23,13 @@ public class DisciplinaService {
     private final UsuarioRepository usuarios;
     private final NotificacaoService notificacoes;
 
-    /** Média simples das avaliações; null se ainda não há notas. */
+    /** Média simples das avaliações convertidas para a escala de 0 a 10. */
     public static BigDecimal calcularMedia(List<Nota> lista) {
         if (lista.isEmpty()) return null;
         BigDecimal soma = BigDecimal.ZERO;
         for (Nota n : lista) {
-            soma = soma.add(n.getValor());
+            soma = soma.add(n.getValor().multiply(BigDecimal.TEN)
+                    .divide(n.getValorAvaliacao(), java.math.MathContext.DECIMAL128));
         }
         return soma.divide(BigDecimal.valueOf(lista.size()), 2, RoundingMode.HALF_UP);
     }

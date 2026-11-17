@@ -157,12 +157,12 @@ Todos exigem sessão, exceto `register` e `login`. Requisições que alteram dad
 - Notificações: acesso pelo sino no Dashboard, com contador de não lidas; a rota continua disponível e saiu do menu lateral.
 - Mobile: logo no cabeçalho com link para o Dashboard.
 - Cadastro: consentimentos de integrações e uso de dados externos são opcionais, independentes e desmarcados por padrão. As escolhas são gravadas na mesma transação da criação da conta e podem ser alteradas em Privacidade e conta.
-- Notas: média simples (soma das notas dividida pela quantidade), incluindo notas antigas. O peso saiu do formulário, da tabela e dos DTOs da API. A coluna legada permanece no banco para compatibilidade; não influencia os cálculos. A escala continua de 0 a 10.
+- Notas: média simples das avaliações convertidas para a escala de 0 a 10, incluindo notas antigas. O peso saiu do formulário, da tabela e dos DTOs da API. A coluna legada permanece no banco para compatibilidade; não influencia os cálculos. A escala continua de 0 a 10.
 - Não é necessária migração de banco para estes ajustes.
 
 ## Valor da prova e logo mobile
 
-O cabeçalho mobile usa logo-completo-escuro.png. Ao lançar ou editar notas, informe a nota obtida e o valor da prova (de 0,01 até 10, campo inicialmente em branco e obrigatório). A nota obtida não pode ultrapassar o valor da prova. O valor da prova fica salvo e visível na tabela; a média simples continua usando as notas obtidas.
+O cabeçalho mobile usa logo-completo-escuro.png. Ao lançar ou editar notas, informe a nota obtida e o valor da prova (de 0,01 até 10, campo inicialmente em branco e obrigatório). A nota obtida não pode ultrapassar o valor da prova. O valor da prova fica salvo e visível na tabela; a média converte cada nota para a escala de 0 a 10 antes de calcular a média simples.
 
 A migração Flyway V2 adiciona o valor da avaliação ao banco e atribui 10 às avaliações existentes. Ela é aplicada automaticamente na próxima inicialização do backend.
 
@@ -189,3 +189,13 @@ O envio só é tentado depois de salvar a transação. Sem SMTP ou com falha de 
 ### Verificação
 
 Execute mvn test em backend para os testes unitários. Para os testes HTTP completos, prepare um banco PostgreSQL separado e defina LS_TEST_DB_URL, LS_TEST_DB_USER e LS_TEST_DB_PASSWORD (nunca use o banco de produção). Os testes de integração são ignorados quando LS_TEST_DB_URL não está definido. Eles verificam migrações, isolamento, CSRF, expiração, reenvio, recusa, aprovação, falha de SMTP e duas confirmações simultâneas. Os e-mails são simulados nesses testes; a entrega real deve ser validada com o SMTP da instalação.
+
+## Ajustes após a revisão de telas
+
+- Tema escuro: links, etiquetas, indicadores e categorias do calendário com cores claras sobre os fundos escuros.
+- Mobile: gaveta abaixo do cabeçalho, botão Fechar menu acessível, fechamento pela própria página, Esc ou fundo. Menu fechado e conteúdo coberto ficam fora da navegação pelo teclado conforme o estado. Sem rolagem horizontal no Dashboard a 320 pixels.
+- Média: cada nota é convertida por nota obtida ÷ valor da prova × 10; a média simples usa esses valores e só arredonda o resultado final para duas casas. Exemplo: 4 de 5 e 10 de 10 resultam em média 9. Nenhuma nota salva foi alterada; os resultados são recalculados ao consultar.
+- Mini-player: opção Abrir vídeo na plataforma, inclusive como alternativa se o provedor bloquear a incorporação.
+- Testes: 38 testes Java aprovados, inclusive integração com banco separado. Envio de convite e de resultado validado por SMTP local de captura; isso não comprova entrega no Gmail.
+
+Para Gmail, use smtp.gmail.com, porta 587, SMTP_AUTH=true e SMTP_STARTTLS_ENABLE=true. Configure o endereço completo em SPRING_MAIL_USERNAME e MAIL_FROM; a credencial autorizada fica em SPRING_MAIL_PASSWORD, apenas no ambiente local do processo. O fluxo SMTP atual não implementa OAuth do Google: quando disponível na conta, uma senha de app pode ser usada com verificação em duas etapas. Referências: https://support.google.com/mail/answer/7104828 e https://support.google.com/accounts/answer/185833?hl=pt-BR. O Spring Boot não carrega .env automaticamente neste projeto; exporte as variáveis ou use as variáveis de ambiente da configuração de execução no IntelliJ.

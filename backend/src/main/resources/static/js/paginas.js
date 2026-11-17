@@ -44,7 +44,7 @@ async function pgDashboard(el) {
       ${raw(indicador(i.taxaConclusaoPercentual + '%', 'das atividades concluídas'))}
       ${raw(indicador(i.entregasEm7Dias, 'entregas nos próximos 7 dias'))}
       ${raw(indicador(i.atrasadas, 'atividades atrasadas', i.atrasadas > 0))}
-      ${raw(indicador(fmtNum(i.mediaGeral), 'média geral das notas'))}
+      ${raw(indicador(fmtNum(i.mediaGeral), 'média geral das notas (0 a 10)'))}
       ${raw(indicador(
           i.frequenciaMedia == null
               ? '—'
@@ -320,11 +320,12 @@ async function pgAcademico(el) {
     discs = await api.get('/api/disciplinas');
     el.innerHTML = html`${raw(cabecalho('Informações acadêmicas', 'Disciplinas, notas e frequência (cadastro manual nesta versão).', '<button class="btn" data-acao="nova-disc">Nova disciplina</button>'))}
       <div class="aviso">Os dados abaixo são inseridos por você. Ainda não há integração real com sistemas de instituições.</div>
+      <p class="mudo">A média converte cada avaliação para a escala de 0 a 10. Por exemplo: 4 numa prova que vale 5 equivale a 8 de 10.</p>
       ${raw(!discs.length ? '<p class="vazio">Nenhuma disciplina cadastrada.</p>' : '')}
       ${lista(discs, d => html`<section class="painel"><div class="pg-head" style="margin-bottom:.5rem"><div><h2>${d.nome}</h2><p>${d.professor || 'Professor não informado'}</p></div>
         <div class="acoes"><button class="btn sec peq" data-acao="nova-nota" data-id="${d.id}">Lançar nota</button><button class="btn sec peq" data-acao="ed-disc" data-id="${d.id}">Editar</button>
         <button class="btn perigo peq" data-acao="ex-disc" data-id="${d.id}">Excluir</button></div></div>
-        <p><strong>Média simples:</strong> ${fmtNum(d.media)} &nbsp; <strong>Frequência:</strong> ${d.frequenciaPercentual == null ? '—' : fmtNum(d.frequenciaPercentual) + '%'}</p>
+        <p><strong>Média (0 a 10):</strong> ${fmtNum(d.media)} &nbsp; <strong>Frequência:</strong> ${d.frequenciaPercentual == null ? '—' : fmtNum(d.frequenciaPercentual) + '%'}</p>
         ${raw(d.notas.length ? html`<div class="tabela-rolagem"><table><caption class="sr-only">Notas de ${d.nome}</caption><thead><tr><th scope="col">Avaliação</th><th scope="col">Data</th><th scope="col">Nota obtida</th><th scope="col">Valor da prova</th><th scope="col">Ações</th></tr></thead>
           <tbody>${lista(d.notas, n => html`<tr><td>${n.descricao}</td><td>${fmtData(n.dataLancamento)}</td><td>${fmtNum(n.valor)}</td><td>${fmtNum(n.valorAvaliacao)}</td>
             <td><div class="acoes"><button class="btn sec peq" data-acao="ed-nota" data-id="${n.id}" data-disc="${d.id}">Editar</button><button class="btn perigo peq" data-acao="ex-nota" data-id="${n.id}">Excluir</button></div></td></tr>`)}</tbody></table></div>`

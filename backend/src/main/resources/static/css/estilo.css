@@ -1975,3 +1975,35 @@ body.pagina-cadastro {
 .avaliacao-logo { display: block; width: 200px; max-width: 70%; height: auto; margin-bottom: 1.5rem; }
 .texto-resposta { white-space: pre-wrap; overflow-wrap: anywhere; }
 .links-professor a { overflow-wrap: anywhere; }
+
+/* Gaveta mobile limitada à tela; cabeçalho e botão de fechar continuam acessíveis. */
+.fundo-menu[hidden] { display: none; }
+@media (max-width: 900px) {
+  .app, body.menu-fixo .app { grid-template-columns: minmax(0, 1fr); }
+  .topo-mobile { z-index: 70; }
+  .lateral, .lateral:hover, body.menu-fixo .lateral {
+    width: min(260px, calc(100vw - 48px));
+    max-width: calc(100vw - 48px);
+    top: var(--altura-topo-mobile, 76px);
+    height: calc(100dvh - var(--altura-topo-mobile, 76px));
+    overflow-y: auto;
+    visibility: hidden;
+    transition: transform .2s, visibility .2s;
+  }
+  body.menu-aberto .lateral { visibility: visible; }
+  body.menu-aberto { overflow: hidden; }
+  .fundo-menu {
+    position: fixed; inset: var(--altura-topo-mobile, 76px) 0 0;
+    z-index: 55; border: 0; margin: 0; padding: 0; border-radius: 0;
+    background: rgb(0 0 0 / 45%); width: 100%;
+  }
+  .topo-mobile #btn-menu { flex-shrink: 0; min-height: 44px; }
+}
+
+.player-origem { margin: .5rem; }
+.player.min .player-origem { display: none; }
+
+@media (max-width: 900px) {
+  /* A gaveta fica fora da tela quando fechada, sem criar rolagem no documento. */
+  html { overflow-x: clip; }
+}

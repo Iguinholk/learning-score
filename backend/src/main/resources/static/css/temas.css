@@ -85,3 +85,23 @@
                 color .2s ease;
     }
 }
+
+/* Texto e etiquetas precisam de cores próprias sobre superfícies escuras. */
+[data-theme="dark"] main a:not(.btn) { color: #B9D7FF; }
+[data-theme="dark"] main a:not(.btn):hover { color: #FFFFFF; }
+[data-theme="dark"] .b-PENDENTE, [data-theme="dark"] .b-MEDIA { color: #FFE29A; }
+[data-theme="dark"] .b-EM_ANDAMENTO { color: #BED4FF; }
+[data-theme="dark"] .b-CONCLUIDA, [data-theme="dark"] .b-PAGO,
+[data-theme="dark"] .b-BAIXA, [data-theme="dark"] .b-SUCESSO { color: #9FE5CF; }
+[data-theme="dark"] .b-ATRASADA, [data-theme="dark"] .b-ATRASADO,
+[data-theme="dark"] .b-ALTA, [data-theme="dark"] .b-FALHA,
+[data-theme="dark"] .b-TIMEOUT { color: #FFC5BE; }
+
+[data-theme="dark"] .ind.alerta .v, [data-theme="dark"] .aviso.erro { color: #FFC5BE; }
+[data-theme="dark"] .aviso { color: #FFE29A; }
+[data-theme="dark"] .comp { color: #9FE5CF; }
+
+[data-theme="dark"] .chip.ATIVIDADE { color: #BED4FF; }
+[data-theme="dark"] .chip.PROVA { color: #FFC5BE; }
+[data-theme="dark"] .chip.EVENTO_ACADEMICO { color: #9FE5CF; }
+[data-theme="dark"] .chip.COMPROMISSO, [data-theme="dark"] .chip.OUTRO { color: #FFE29A; }

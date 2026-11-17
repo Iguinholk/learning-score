@@ -135,6 +135,10 @@ const player = {
   abrir(titulo, urlEmbed) {
     const el = document.getElementById('player'); if (!el) return;
     if (!/^https:\/\/(www\.youtube-nocookie\.com\/embed\/|player\.vimeo\.com\/video\/)/.test(urlEmbed || '')) { toast('Este conteúdo não possui vídeo.', 'erro'); return; }
+    const origem = document.getElementById('player-origem');
+    const videoId = urlEmbed.split('/').pop();
+    origem.href = urlEmbed.includes('youtube-nocookie.com') ? 'https://www.youtube.com/watch?v=' + videoId : 'https://vimeo.com/' + videoId;
+    origem.hidden = false;
     document.getElementById('player-titulo').textContent = titulo;
     const box = document.getElementById('player-video'); box.textContent = '';
     const f = document.createElement('iframe');
