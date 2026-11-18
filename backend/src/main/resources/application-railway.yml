@@ -1,0 +1,29 @@
+# Ativado apenas no ambiente de publicação: SPRING_PROFILES_ACTIVE=railway.
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      cookie:
+        secure: true
+
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+  # Schema exclusivo: não publica as tabelas acadêmicas na API pública do Supabase.
+  flyway:
+    schemas: learning_score
+    default-schema: learning_score
+    create-schemas: true
+  jpa:
+    properties:
+      hibernate.default_schema: learning_score
+
+learningscore:
+  public-base-url: ${PUBLIC_BASE_URL}
+  cors:
+    allowed-origins: ${PUBLIC_BASE_URL}
+  demo:
+    enabled: false
